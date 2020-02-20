@@ -7,6 +7,7 @@ function main() {
   const cells = []
   let score = 0
   let dude = 250
+  let playerDirection
   let ghost1 = 209
   let ghost2 = 211
 
@@ -45,59 +46,21 @@ function main() {
   // THIS CODE CONTROLLS THE MOVEMENT OF THE PLAYER AND DOES NOT ALLOW MOVEMENT IN TO WALLS
 
 
-
   document.addEventListener('keydown', (event) => {
 
-
-
+    //SETS THE PLAYER DIRECTION TO BE USED AT EACH INTERVAL
 
     if (event.key === 'ArrowRight') {
-      if (dude === 219) {
-        cells[dude].classList.remove('dude')
-        dude -= 19
-        cells[dude].classList.add('dude')
-
-      } else if (wallCells.includes(dude + 1)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude += 1
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
+      playerDirection = 2
     } else if (event.key === 'ArrowLeft') {
-      if (dude === 200) {
-        cells[dude].classList.remove('dude')
-        dude += 19
-        cells[dude].classList.add('dude')
-      } else if (wallCells.includes(dude - 1)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude -= 1
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
+      playerDirection = 4
     } else if (event.key === 'ArrowDown') {
-      if (wallCells.includes(dude + 20)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude += 20
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
+      playerDirection = 3
     } else if (event.key === 'ArrowUp') {
-      if (wallCells.includes(dude - 20)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude -= 20
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
+      playerDirection = 1
     }
 
-
   })
-
-
 
 
   //LOGIC TO ACTIVATE AND CONTROLL GHOST
@@ -174,7 +137,7 @@ function main() {
       cells[ghost2].classList.add('ghost2')
     } else if (ghost2 !== 211) {
 
-      // THIS PICHS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT
+      // THIS PICKS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT
       const nextCellGhost = Math.floor((Math.random()) * ghost2AvailableDirctions.length)
 
       ghost2Direction = directionMoving(ghost2, ghost2AvailableDirctions[parseInt(nextCellGhost)])
@@ -204,6 +167,55 @@ function main() {
       cells[ghost2].classList.add('ghost2')
     }
 
+    //IN INTERVAL LOGIC CONTROLL FOR PLAYER --- USES THE PLAYED DIRECTION VARIABLE TO MOVRE THE PLAYER ONE SQUARE AT EACH INTERVAL
+
+    if (playerDirection === 2) {
+      if (dude === 219) {
+        cells[dude].classList.remove('dude')
+        dude -= 19
+        cells[dude].classList.add('dude')
+
+      } else if (wallCells.includes(dude + 1)) {
+        return
+      }
+      cells[dude].classList.remove('dude')
+      dude += 1
+      cells[dude].classList.add('dude')
+      removeFoodIncrementScore(dude)
+    } else if (playerDirection === 4) {
+      if (dude === 200) {
+        cells[dude].classList.remove('dude')
+        dude += 19
+        cells[dude].classList.add('dude')
+      } else if (wallCells.includes(dude - 1)) {
+        return
+      }
+      cells[dude].classList.remove('dude')
+      dude -= 1
+      cells[dude].classList.add('dude')
+      removeFoodIncrementScore(dude)
+    } else if (playerDirection === 3) {
+      if (wallCells.includes(dude + 20)) {
+        return
+      }
+      cells[dude].classList.remove('dude')
+      dude += 20
+      cells[dude].classList.add('dude')
+      removeFoodIncrementScore(dude)
+    } else if (playerDirection === 1) {
+      if (wallCells.includes(dude - 20)) {
+        return
+      }
+      cells[dude].classList.remove('dude')
+      dude -= 20
+      cells[dude].classList.add('dude')
+      removeFoodIncrementScore(dude)
+    }
+
+
+
+
+
     console.log(intervalId)
 
 
@@ -214,6 +226,7 @@ function main() {
     if (cells[cellNum].classList.contains('food')) {
       cells[cellNum].classList.remove('food')
       score += 10
+      console.log(score)
     }
   }
 
