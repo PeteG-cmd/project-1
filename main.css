@@ -35,5 +35,19 @@ body {
 }
 
 .dude {
-  background-color: red;
+  background-image: url(images/pac-man.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost1 {
+  background-image: url(images/ghost-1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost2 {
+  background-image: url(images/ghost-2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
 }
