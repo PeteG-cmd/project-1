@@ -39,7 +39,9 @@ function main() {
     cells.push(cell)
   }
 
-
+  // MAKE AND DISPLAY THE SCORE IN WHITE
+  cells[161].innerHTML = score
+  cells[161].classList.add('white')
 
 
   class Ghost {
@@ -110,11 +112,7 @@ function main() {
         return 3
       }
     }
-
-
   }
-
-
 
   // THIS CODE LOGS THE DIRECTION THE PLAYER IS WANTING PAC MAN TO MOVE DURING THE NEXT INTERVAL
 
@@ -151,19 +149,15 @@ function main() {
   createGhost(210)
   createGhost(211)
 
-
-  
-
   function startGhostRelease() {
     setTimeout(() => {
       if (ghostPenOccupied.length > 0) {
         ghosts.map((element) => {
           if (element.currentCell === ghostPenOccupied[0]) {
-            console.log(element.currentCell)
             cells[element.currentCell].classList.remove(element.name)
             element.currentCell -= 40
             cells[element.currentCell].classList.add(element.name)
-            
+
           }
         })
       }
@@ -181,29 +175,13 @@ function main() {
       startGhostRelease()
     }
 
-
-
     ghosts.map((element) => {
-      // if (element.currentCell === 209) {
-      //   console.log(element.currentCell)
-      //   cells[element.currentCell].classList.remove(element.name)
-      //   element.currentCell = 169
-      //   cells[element.currentCell].classList.add(element.name)
-      // }
-      // if (element.currentCell === 208) {
-      //   console.log(element.currentCell)
-      //   cells[element.currentCell].classList.remove(element.name)
-      //   element.currentCell = 168
-      //   cells[element.currentCell].classList.add(element.name)
-      // }
+
       if (!(ghostPenOccupied.includes(element.currentCell))) {
         element.setAvailableDirections()
         element.moveGhost()
       }
     })
-
-    console.log(intervalId)
-
 
   }, 500)
 
@@ -224,6 +202,7 @@ function main() {
       dude += 1
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
+
     } else if (playerDirection === 4) {
       if (dude === 200) {
         cells[dude].classList.remove('dude')
@@ -236,6 +215,7 @@ function main() {
       dude -= 1
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
+
     } else if (playerDirection === 3) {
       if (wallCells.includes(dude + 20)) {
         return
@@ -244,6 +224,7 @@ function main() {
       dude += 20
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
+     
     } else if (playerDirection === 1) {
       if (wallCells.includes(dude - 20)) {
         return
@@ -252,6 +233,7 @@ function main() {
       dude -= 20
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
+    
     }
 
   }, 500)
@@ -262,9 +244,23 @@ function main() {
     if (cells[cellNum].classList.contains('food')) {
       cells[cellNum].classList.remove('food')
       score += 10
-      console.log(score)
+      cells[161].innerHTML = score
     }
   }
+
+  //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER
+
+  const intervalId3 = setInterval(() => {
+    ghosts.map((element) => {
+
+      if (cells[dude].classList.contains(element.name)) {
+        clearInterval(intervalId2)
+        clearInterval(intervalId)
+        clearInterval(intervalId3)
+        alert(`GAME OVER! You scored ${score}...`)
+      }
+    })
+  }, 10)
 
 
 
