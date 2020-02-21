@@ -22,7 +22,7 @@ function main() {
   const numOfGhostsInGame = 6
   const secondsBetweenNewGhostGeneration = 8
   const secondsBetweenGhostRelease = 3
-  
+
 
   const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 160, 161, 162, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
 
@@ -61,6 +61,7 @@ function main() {
       this.currentCell = currentCell
       this.directionMoving
       this.availableDirections = []
+      this.cellJustLeft = currentCell //NEEDED FOR ENDING GAME WITHOUT GLITCHES
 
     }
     setAvailableDirections() {
@@ -85,10 +86,12 @@ function main() {
       // THE FOLLOWING 2 X IF ELSE HANDLE IF THE GHOST GOES THROUGH THE TRANSPORT TUNNEL
       if (this.currentCell === 219 && this.directionMoving === 2) {
         cells[this.currentCell].classList.remove(this.name)
+        this.cellJustLeft = this.currentCell
         this.currentCell -= (width - 1)
         cells[this.currentCell].classList.add(this.name)
       } else if (this.currentCell === 200 && this.directionMoving === 4) {
         cells[this.currentCell].classList.remove(this.name)
+        this.cellJustLeft = this.currentCell
         this.currentCell += (width - 1)
         cells[this.currentCell].classList.add(this.name)
       } else if (this.currentCell !== 209) {
@@ -100,6 +103,7 @@ function main() {
 
 
         cells[this.currentCell].classList.remove(this.name)
+        this.cellJustLeft = this.currentCell
         this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
         cells[this.currentCell].classList.add(this.name)
 
@@ -154,10 +158,7 @@ function main() {
     console.log(ghosts)
   }
 
-  createGhost(208)
-  createGhost(209)
-  createGhost(210)
-  createGhost(211)
+
 
   function startGhostReleaseTimer() {
     setTimeout(() => {
@@ -167,7 +168,6 @@ function main() {
             cells[element.currentCell].classList.remove(element.name)
             element.currentCell -= 40
             cells[element.currentCell].classList.add(element.name)
-
           }
         })
       }
@@ -182,9 +182,6 @@ function main() {
       ghostReleaseCountdownActive = true
       startGhostReleaseTimer()
     }
-
-
-
   }
 
   function moveGhosts() {
@@ -196,7 +193,7 @@ function main() {
     })
   }
 
-  //GENERATES A NEW GHOST IN AN EMPTY PEC CELL
+  //GENERATES A NEW GHOST IN AN EMPTY PEN CELL
   function generateNewGhost() {
     createGhost(ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
   }
@@ -211,7 +208,7 @@ function main() {
 
   function checkForGameOver() {
     ghosts.map((element) => {
-      if (cells[dude].classList.contains(element.name)) {
+      if (cells[dude].classList.contains(element.name) || cells[element.cellJustLeft].classList.contains('dude')) {
         clearInterval(intervalId2)
         clearInterval(intervalId)
         clearInterval(intervalId3)
@@ -236,6 +233,11 @@ function main() {
 
   function startGame(numberOfGhosts) {
 
+    createGhost(208)
+    createGhost(209)
+    createGhost(210)
+    createGhost(211)
+
     setInterval(() => {
       if ((numberOfGhosts - 4) > 0) {
         generateNewGhost()
@@ -248,7 +250,6 @@ function main() {
 
       releaseGhosts()
       moveGhosts()
-      console.log(ghosts)
 
     }, ghostSpeed * 1000)
 
@@ -315,9 +316,6 @@ function main() {
     }, 10)
 
   }
-
-
-
 
 
 }
