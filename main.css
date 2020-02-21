@@ -71,6 +71,30 @@ body {
   background-repeat: no-repeat;
 }
 
+.ghost5 {
+  background-image: url(images/ghost-1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost6 {
+  background-image: url(images/ghost-2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost7 {
+  background-image: url(images/ghost-1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost8 {
+  background-image: url(images/ghost-2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .white {
   color: white;
 }

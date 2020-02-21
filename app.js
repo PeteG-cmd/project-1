@@ -11,8 +11,18 @@ function main() {
   let dude = 250
   let playerDirection
   const ghosts = []
+  const ghostPenCells = [208, 209, 210, 211]
   const ghostPenOccupied = []
   let ghostReleaseCountdownActive = false
+  let intervalId
+  let intervalId2
+  let intervalId3
+  const ghostSpeed = 0.5
+  const playerSpeed = 0.5
+  const numOfGhostsInGame = 6
+  const secondsBetweenNewGhostGeneration = 8
+  const secondsBetweenGhostRelease = 3
+  
 
   const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 160, 161, 162, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
 
@@ -149,7 +159,7 @@ function main() {
   createGhost(210)
   createGhost(211)
 
-  function startGhostRelease() {
+  function startGhostReleaseTimer() {
     setTimeout(() => {
       if (ghostPenOccupied.length > 0) {
         ghosts.map((element) => {
@@ -163,82 +173,33 @@ function main() {
       }
       ghostPenOccupied.shift()
       ghostReleaseCountdownActive = false
-    }, 3000)
+
+    }, secondsBetweenGhostRelease * 1000)
   }
 
-
-
-  const intervalId = setInterval(() => {
-
+  function releaseGhosts() {
     if (ghostReleaseCountdownActive === false) {
       ghostReleaseCountdownActive = true
-      startGhostRelease()
+      startGhostReleaseTimer()
     }
 
-    ghosts.map((element) => {
 
+
+  }
+
+  function moveGhosts() {
+    ghosts.map((element) => {
       if (!(ghostPenOccupied.includes(element.currentCell))) {
         element.setAvailableDirections()
         element.moveGhost()
       }
     })
+  }
 
-  }, 500)
-
-  const intervalId2 = setInterval(() => {
-
-    //INTERVAL 2 - LOGIC CONTROLL FOR PLAYER --- USES THE PLAYED DIRECTION VARIABLE TO MOVRE THE PLAYER ONE SQUARE AT EACH INTERVAL
-
-    if (playerDirection === 2) {
-      if (dude === 219) {
-        cells[dude].classList.remove('dude')
-        dude -= 19
-        cells[dude].classList.add('dude')
-
-      } else if (wallCells.includes(dude + 1)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude += 1
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
-
-    } else if (playerDirection === 4) {
-      if (dude === 200) {
-        cells[dude].classList.remove('dude')
-        dude += 19
-        cells[dude].classList.add('dude')
-      } else if (wallCells.includes(dude - 1)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude -= 1
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
-
-    } else if (playerDirection === 3) {
-      if (wallCells.includes(dude + 20)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude += 20
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
-
-    } else if (playerDirection === 1) {
-      if (wallCells.includes(dude - 20)) {
-        return
-      }
-      cells[dude].classList.remove('dude')
-      dude -= 20
-      cells[dude].classList.add('dude')
-      removeFoodIncrementScore(dude)
-
-    }
-
-  }, 500)
-
-
+  //GENERATES A NEW GHOST IN AN EMPTY PEC CELL
+  function generateNewGhost() {
+    createGhost(ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
+  }
 
   function removeFoodIncrementScore(cellNum) {
     if (cells[cellNum].classList.contains('food')) {
@@ -248,9 +209,7 @@ function main() {
     }
   }
 
-  //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER OR IF THE PLAYER HAS WON
-
-  const intervalId3 = setInterval(() => {
+  function checkForGameOver() {
     ghosts.map((element) => {
       if (cells[dude].classList.contains(element.name)) {
         clearInterval(intervalId2)
@@ -259,21 +218,105 @@ function main() {
         alert(`GAME OVER! You scored ${score}...`)
       }
     })
+  }
 
-
+  function checkForGameWon() {
     const foodRemaining = cells.some((cell) => {
       return cell.classList.contains('food')
     })
-
     if (!(foodRemaining)) {
-
       clearInterval(intervalId2)
       clearInterval(intervalId)
       clearInterval(intervalId3)
       alert(`LEVEL COMPLETE! You scored ${score}...`)
     }
+  }
 
-  }, 10)
+  startGame(numOfGhostsInGame)
+
+  function startGame(numberOfGhosts) {
+
+    setInterval(() => {
+      if ((numberOfGhosts - 4) > 0) {
+        generateNewGhost()
+        numberOfGhosts--
+
+      }
+    }, secondsBetweenNewGhostGeneration * 1000)
+
+    intervalId = setInterval(() => {
+
+      releaseGhosts()
+      moveGhosts()
+      console.log(ghosts)
+
+    }, ghostSpeed * 1000)
+
+    intervalId2 = setInterval(() => {
+
+      //INTERVAL 2 - LOGIC CONTROLL FOR PLAYER --- USES THE PLAYED DIRECTION VARIABLE TO MOVRE THE PLAYER ONE SQUARE AT EACH INTERVAL
+
+      if (playerDirection === 2) {
+        if (dude === 219) {
+          cells[dude].classList.remove('dude')
+          dude -= 19
+          cells[dude].classList.add('dude')
+
+        } else if (wallCells.includes(dude + 1)) {
+          return
+        }
+        cells[dude].classList.remove('dude')
+        dude += 1
+        cells[dude].classList.add('dude')
+        removeFoodIncrementScore(dude)
+
+      } else if (playerDirection === 4) {
+        if (dude === 200) {
+          cells[dude].classList.remove('dude')
+          dude += 19
+          cells[dude].classList.add('dude')
+        } else if (wallCells.includes(dude - 1)) {
+          return
+        }
+        cells[dude].classList.remove('dude')
+        dude -= 1
+        cells[dude].classList.add('dude')
+        removeFoodIncrementScore(dude)
+
+      } else if (playerDirection === 3) {
+        if (wallCells.includes(dude + 20)) {
+          return
+        }
+        cells[dude].classList.remove('dude')
+        dude += 20
+        cells[dude].classList.add('dude')
+        removeFoodIncrementScore(dude)
+
+      } else if (playerDirection === 1) {
+        if (wallCells.includes(dude - 20)) {
+          return
+        }
+        cells[dude].classList.remove('dude')
+        dude -= 20
+        cells[dude].classList.add('dude')
+        removeFoodIncrementScore(dude)
+
+      }
+
+    }, playerSpeed * 1000)
+
+    //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER OR IF THE PLAYER HAS WON
+
+    intervalId3 = setInterval(() => {
+
+      checkForGameOver()
+      checkForGameWon()
+
+    }, 10)
+
+  }
+
+
 
 
 
