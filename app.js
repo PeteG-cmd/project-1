@@ -224,7 +224,7 @@ function main() {
       dude += 20
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
-     
+
     } else if (playerDirection === 1) {
       if (wallCells.includes(dude - 20)) {
         return
@@ -233,7 +233,7 @@ function main() {
       dude -= 20
       cells[dude].classList.add('dude')
       removeFoodIncrementScore(dude)
-    
+
     }
 
   }, 500)
@@ -248,11 +248,10 @@ function main() {
     }
   }
 
-  //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER
+  //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER OR IF THE PLAYER HAS WON
 
   const intervalId3 = setInterval(() => {
     ghosts.map((element) => {
-
       if (cells[dude].classList.contains(element.name)) {
         clearInterval(intervalId2)
         clearInterval(intervalId)
@@ -260,6 +259,20 @@ function main() {
         alert(`GAME OVER! You scored ${score}...`)
       }
     })
+
+
+    const foodRemaining = cells.some((cell) => {
+      return cell.classList.contains('food')
+    })
+
+    if (!(foodRemaining)) {
+
+      clearInterval(intervalId2)
+      clearInterval(intervalId)
+      clearInterval(intervalId3)
+      alert(`LEVEL COMPLETE! You scored ${score}...`)
+    }
+
   }, 10)
 
 
