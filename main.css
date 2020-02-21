@@ -59,3 +59,14 @@ body {
   background-repeat: no-repeat;
 }
 
+.ghost3 {
+  background-image: url(images/ghost-1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.ghost4 {
+  background-image: url(images/ghost-2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
