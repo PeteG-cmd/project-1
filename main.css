@@ -41,6 +41,13 @@ body {
   background-repeat: no-repeat;
 }
 
+.superFood {
+  background-image: url(images/food-dot.png);
+  background-size: 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .dude {
   background-image: url(images/pac-man.png);
   background-size: contain;
@@ -91,6 +98,12 @@ body {
 
 .ghost8 {
   background-image: url(images/ghost-2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.eatableBlue {
+  background-image: url(images/ghost-blue.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
