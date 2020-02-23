@@ -22,6 +22,8 @@ function main() {
   const numOfGhostsInGame = 1
   const secondsBetweenNewGhostGeneration = 8
   const secondsBetweenGhostRelease = 3
+  const searchWidth = 8
+  const chanceOfGhostMovingSmartly = 80 // this is as a percentage
 
 
   const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 160, 161, 162, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
@@ -106,14 +108,14 @@ function main() {
         cells[this.currentCell].classList.add(this.name)
       } else if (this.currentCell !== 209) {
 
-        if (this.cellOnPath !== '') { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN
+        if (this.cellOnPath !== '' && this.willFindCellOnPath() === true) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN
           // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
 
           this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
 
           cells[this.currentCell].classList.remove(this.name)
           this.cellJustLeft = this.currentCell
-          console.log('Ghost Moving to Cell on Direct Path:')
+          console.log('Ghost Moving to Smartly to Cell on Direct Path:')
           console.log(this.cellOnPath)
           this.currentCell = this.cellOnPath
           this.cellOnPath = ''
@@ -134,6 +136,7 @@ function main() {
           console.log('Ghost moving from current cell, which is:')
           console.log(this.currentCell)
           this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
+          this.cellOnPath = '' // THIS IS NEEDED AS IF BY CHANCE THE GHOST STOPS FOLLOWING THE PATH, I NEED TO ERASE THE PATH FOR THE GHOST TO FIND AGAIN
           cells[this.currentCell].classList.add(this.name)
           this.availableDirections = []
         }
@@ -153,6 +156,15 @@ function main() {
       }
       if (newCell - currentCell === width) {
         return 3
+      }
+    }
+
+    willFindCellOnPath() {
+      const num = Math.floor((Math.random() * 100))
+      if (num < chanceOfGhostMovingSmartly) {
+        return true
+      } else {
+        return false
       }
     }
 
@@ -177,7 +189,7 @@ function main() {
 
           // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN A 10 CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
 
-          if (checkCell.path.length > 9) {
+          if (checkCell.path.length > searchWidth - 1) {
             pathNotFound = false
             console.log(checkCell.path)
             console.log('Path not Found - Distance above 10')
