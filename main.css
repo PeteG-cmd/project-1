@@ -35,7 +35,7 @@ body {
 }
 
 .food {
-  background-image: url(images/food-dot.png);
+  background-image: url(images/food-dot-black.png);
   background-size: 10px;
   background-position: center;
   background-repeat: no-repeat;

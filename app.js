@@ -19,7 +19,7 @@ function main() {
   let intervalId3
   const ghostSpeed = 0.5
   const playerSpeed = 0.5
-  const numOfGhostsInGame = 6
+  const numOfGhostsInGame = 1
   const secondsBetweenNewGhostGeneration = 8
   const secondsBetweenGhostRelease = 3
 
@@ -54,6 +54,15 @@ function main() {
   cells[161].classList.add('white')
 
 
+  class Location {
+
+    constructor(cellNumber, path) {
+      this.cellNumber = cellNumber
+      this.path = path
+    }
+  }
+
+
   class Ghost {
 
     constructor(name, currentCell) {
@@ -61,7 +70,8 @@ function main() {
       this.currentCell = currentCell
       this.directionMoving
       this.availableDirections = []
-      this.cellJustLeft = currentCell //NEEDED FOR ENDING GAME WITHOUT GLITCHES
+      this.cellOnPath
+      this.cellJustLeft = currentCell //NEEDED FOR ENDING GAME WITHOUT GLITCHES AND PLAYER BEING ABLE TO 'CROSSOVER' ANY OF THE GHOSTS
 
     }
     setAvailableDirections() {
@@ -72,11 +82,11 @@ function main() {
       if ((!(wallCells.includes(this.currentCell - 1))) && this.directionMoving !== 2) {
         this.availableDirections.push(this.currentCell - 1)
       }
-      if ((!(wallCells.includes(this.currentCell + 20))) && this.directionMoving !== 1) {
-        this.availableDirections.push(this.currentCell + 20)
+      if ((!(wallCells.includes(this.currentCell + width))) && this.directionMoving !== 1) {
+        this.availableDirections.push(this.currentCell + width)
       }
-      if ((!(wallCells.includes(this.currentCell - 20))) && this.directionMoving !== 3) {
-        this.availableDirections.push(this.currentCell - 20)
+      if ((!(wallCells.includes(this.currentCell - width))) && this.directionMoving !== 3) {
+        this.availableDirections.push(this.currentCell - width)
       }
       return
     }
@@ -96,18 +106,37 @@ function main() {
         cells[this.currentCell].classList.add(this.name)
       } else if (this.currentCell !== 209) {
 
-        // THIS PICHS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT
-        const nextCellGhost = Math.floor((Math.random()) * this.availableDirections.length)
+        if (this.cellOnPath !== '') { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN
+          // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
 
-        this.directionMoving = this.findDirectionMoving(this.currentCell, this.availableDirections[parseInt(nextCellGhost)])
+          this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
+
+          cells[this.currentCell].classList.remove(this.name)
+          this.cellJustLeft = this.currentCell
+          console.log('Ghost Moving to Cell on Direct Path:')
+          console.log(this.cellOnPath)
+          this.currentCell = this.cellOnPath
+          this.cellOnPath = ''
+          cells[this.currentCell].classList.add(this.name)
+          this.availableDirections = []
+
+        } else {
 
 
-        cells[this.currentCell].classList.remove(this.name)
-        this.cellJustLeft = this.currentCell
-        this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
-        cells[this.currentCell].classList.add(this.name)
+          // THIS PICKS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT IF NO TARGET PATH AVAILABLE
 
-        this.availableDirections = []
+          const nextCellGhost = Math.floor((Math.random()) * this.availableDirections.length)
+
+          this.directionMoving = this.findDirectionMoving(this.currentCell, this.availableDirections[parseInt(nextCellGhost)])
+
+          cells[this.currentCell].classList.remove(this.name)
+          this.cellJustLeft = this.currentCell
+          console.log('Ghost moving from current cell, which is:')
+          console.log(this.currentCell)
+          this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
+          cells[this.currentCell].classList.add(this.name)
+          this.availableDirections = []
+        }
       }
 
     }
@@ -124,6 +153,80 @@ function main() {
       }
       if (newCell - currentCell === width) {
         return 3
+      }
+    }
+
+    findNextCellOnPath() {
+      // PERFORMANCE NOTES - I COULD LIMIT THIS TO ONLT SEARCH UP TO 10 CELLS, SO THEY ONLY HOME IN ONCE THEY ARE NEAR? THIS COULD ALSO BE BETTER FOR GAME PLAY AS IT WOULD STOP THEM ALL TRACKING YOU AND BEING TOO DIFFICULT
+
+      // THE BELOW IF MEANS THAT WE ONLY BOTHER CHECKING THE PATH IF THE GHOST HAS A CHOICE TO MAKE. THIS IS AGAIN TO IMPROVE PERFORMANCE. NOTE - THIS ALSO SOLVES THE ISSUE OF GHOSTS GOING THROUGH THE TUNNEL, AS THEY ARENT CHECKING THE PATH AT THIS POINT
+
+      if (this.availableDirections.length > 1) {
+        const queue = []
+        const target = dude
+
+        queue.push(new Location(this.currentCell, [this.currentCell]))
+        console.log('Current queue:')
+        console.log(queue)
+        let pathNotFound = true
+
+        while (pathNotFound) {
+          const checkCell = queue.shift()
+          // console.log('Current Check Cell Path')
+          // console.log(checkCell.path)
+
+          // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN A 10 CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
+
+          if (checkCell.path.length > 9) {
+            pathNotFound = false
+            console.log(checkCell.path)
+            console.log('Path not Found - Distance above 10')
+            this.cellOnPath = ''
+          }
+
+          if (checkCell.cellNumber === target) {
+            pathNotFound = false
+            console.log(checkCell.path)
+            console.log('Path Found and Target set')
+            this.cellOnPath = checkCell.path[1]
+          }
+
+          // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH OF LENGTH 1 ,2, 3 etc, UNTIL IT FINDS THE TARGET
+
+          if (!(wallCells.includes(checkCell.cellNumber + 1)) && (!(checkCell.path.includes(checkCell.cellNumber + 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+            checkCell.path.push(checkCell.cellNumber + 1)
+            const newPath = checkCell.path.slice()
+            queue.push(new Location(checkCell.cellNumber + 1, newPath))
+            checkCell.path.pop()
+            // console.log('Checking right')
+          }
+          if (!(wallCells.includes(checkCell.cellNumber - 1)) && (!(checkCell.path.includes(checkCell.cellNumber - 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+            checkCell.path.push(checkCell.cellNumber - 1)
+            const newPath = checkCell.path.slice()
+            queue.push(new Location(checkCell.cellNumber - 1, newPath))
+            checkCell.path.pop()
+            // console.log('Checking left')
+
+          }
+          if (!(wallCells.includes(checkCell.cellNumber + width)) && (!(checkCell.path.includes(checkCell.cellNumber + width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+            checkCell.path.push(checkCell.cellNumber + width)
+            const newPath = checkCell.path.slice()
+            queue.push(new Location(checkCell.cellNumber + width, newPath))
+            checkCell.path.pop()
+            // console.log('Checking down')
+          }
+          if (!(wallCells.includes(checkCell.cellNumber - width)) && (!(checkCell.path.includes(checkCell.cellNumber - width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+            checkCell.path.push(checkCell.cellNumber - width)
+            const newPath = checkCell.path.slice()
+            queue.push(new Location(checkCell.cellNumber - width, newPath))
+            checkCell.path.pop()
+            // console.log('Checking up')
+          }
+
+        }
       }
     }
   }
@@ -188,14 +291,19 @@ function main() {
     ghosts.map((element) => {
       if (!(ghostPenOccupied.includes(element.currentCell))) {
         element.setAvailableDirections()
+        element.findNextCellOnPath() // IT IS VERY IMPORTANT THIS IS SECOND, AS I DONT WANT IT TO RUN UNLESS THERE ARE MULTIPLE AVAILABLE DIRECTIONS. THIS IS FOR PERDORMANCE AND TO LIMIT NEEDED CALCULATIONS
+
         element.moveGhost()
+
       }
     })
   }
 
   //GENERATES A NEW GHOST IN AN EMPTY PEN CELL
   function generateNewGhost() {
-    createGhost(ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
+    if (ghostPenOccupied.length < 4) { //THIS IF STATEMENT STOPS A GHOST BEING GENERATED IF NOT ENOUGH CELLS ARE AVAILABLE
+      createGhost(ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
+    }
   }
 
   function removeFoodIncrementScore(cellNum) {
@@ -234,9 +342,9 @@ function main() {
   function startGame(numberOfGhosts) {
 
     createGhost(208)
-    createGhost(209)
-    createGhost(210)
-    createGhost(211)
+    // createGhost(209)
+    // createGhost(210)
+    // createGhost(211)
 
     setInterval(() => {
       if ((numberOfGhosts - 4) > 0) {
