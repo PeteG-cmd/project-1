@@ -32,7 +32,7 @@ function main() {
 
   const noFoodCells = [166, 167, 168, 169, 170, 171, 172, 173, 200, 208, 209, 210, 211, 219, 246, 247, 248, 249, 250, 251, 252, 253]
 
-  const superFoodCells = [81, 24, 35, 98, 323, 258, 336, 241]
+  const superFoodCells = [81, 24, 35, 98, 323, 336]
 
   //INITIALISE MAP
 
@@ -41,7 +41,7 @@ function main() {
     cell.classList.add('cell')
     cell.innerHTML = i // REMOVE ONCE FINISHED WITH NUMBERS
     if (i === dude) {
-      cell.classList.add('dude')
+      cell.classList.add('dude-right')
     }
     if (!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) {
       cell.classList.add('food')
@@ -357,47 +357,59 @@ function main() {
 
   function removeSuperFoodActivateChase(cellNum) {
 
-  
+
     if (cells[cellNum].classList.contains('superFood')) {
-      if (!(ghosts[0].ghostClass === ghosts[0].name)) {
+      if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
         clearTimeout(ghostEatableTimer)
       }
       cells[cellNum].classList.remove('superFood')
+
+      clearInterval(intervalId2)
+      startPlayerInterval(playerSpeed / 1.4)
+
       score += 50
       cells[161].innerHTML = score
       playerIsHunter = true
-      cells[163].classList.add('eatableBlue')////// THIS NEEDS TO BE CHANGED 
       ghosts.map((element) => {
-        cells[element.currentCell].classList.remove(element.name)
-        cells[element.currentCell].classList.add('eatableBlue')
+        if (!(ghostPenOccupied.includes(element.currentCell))) {
+          cells[element.currentCell].classList.remove(element.name)
+          cells[element.currentCell].classList.add('eatableBlue')
 
-        element.ghostClass = 'eatableBlue'
+          element.ghostClass = 'eatableBlue'
+        }
       })
 
 
       ghostEatableTimer = setTimeout(() => {
         playerIsHunter = false
-        cells[163].classList.remove('eatableBlue')/////// THIS NEEDS TO BE CHANGED
         ghosts.map((element) => {
           cells[element.currentCell].classList.remove('eatableBlue')
           element.ghostClass = element.name
           cells[element.currentCell].classList.add(element.name)
 
         })
+
+        clearInterval(intervalId2)
+        startPlayerInterval(playerSpeed)
+
       }, timeGhostsRemainEatable * 1000)
 
     }
 
+
+
     // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
     ghosts.map((element) => {
 
-      if (cells[element.currentCell].classList.contains('dude') || cells[element.cellJustLeft].classList.contains('dude')) {
+      // if (cells[element.currentCell].classList.contains('dude') || cells[element.cellJustLeft].classList.contains('dude')) {
+      if ((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft)) {
         eatenGhosts.push(element.name)
-        score += 10000
+        score += 100
         cells[161].innerHTML = score
         cells[element.currentCell].classList.remove(element.ghostClass)
         element.currentCell = (ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
         ghostPenOccupied.push(element.currentCell) // THIS IS MAKING SURE THE NEXT GHOST EATEN DOESNT GO TO THE SAME CELL
+        element.ghostClass = element.name
         cells[element.currentCell].classList.add(element.ghostClass)
         element.directionMoving = ''
         element.availableDirections = []
@@ -407,16 +419,20 @@ function main() {
 
       }
     })
-
-
   }
 
-
+  function doesCellContainDude(cellToCheck) {
+    if ((cells[cellToCheck].classList.contains('dude-right')) || (cells[cellToCheck].classList.contains('dude-up')) || (cells[cellToCheck].classList.contains('dude-down')) || (cells[cellToCheck].classList.contains('dude-left'))) {
+      return true
+    }
+  }
 
   function checkForGameOver() {
     if (playerIsHunter === false)
       ghosts.map((element) => {
-        if (cells[dude].classList.contains(element.name) || cells[element.cellJustLeft].classList.contains('dude')) {
+        if (cells[dude].classList.contains(element.name) || doesCellContainDude(element.cellJustLeft)) {
+
+          // cells[element.cellJustLeft].doesCellContainDude(element.cellJustLeft)) {
           clearInterval(intervalId2)
           clearInterval(intervalId)
           clearInterval(intervalId3)
@@ -440,6 +456,87 @@ function main() {
     }
   }
 
+  function startPlayerInterval(playSpeed) {
+
+
+    intervalId2 = setInterval(() => {
+
+      //INTERVAL 2 - LOGIC CONTROLL FOR PLAYER --- USES THE PLAYED DIRECTION VARIABLE TO MOVRE THE PLAYER ONE SQUARE AT EACH INTERVAL
+
+      if (playerDirection === 2) {
+        movePlayerRight()
+
+      } else if (playerDirection === 4) {
+        movePlayerLeft()
+
+      } else if (playerDirection === 3) {
+        movePlayerDown()
+
+      } else if (playerDirection === 1) {
+        movePlayerUp()
+      }
+
+    }, playSpeed * 1000)
+
+  }
+
+
+
+  function movePlayerUp() {
+    if (wallCells.includes(dude - 20)) {
+      return
+    }
+    removeAllPlayerClasses()
+    dude -= 20
+    cells[dude].classList.add('dude-up')
+
+  }
+
+  function movePlayerRight() {
+    if (dude === 219) {
+      removeAllPlayerClasses()
+      dude -= 19
+      cells[dude].classList.add('dude-right')
+
+    } else if (wallCells.includes(dude + 1)) {
+      return
+    }
+    removeAllPlayerClasses()
+    dude += 1
+    cells[dude].classList.add('dude-right')
+  }
+
+  function movePlayerDown() {
+    if (wallCells.includes(dude + 20)) {
+      return
+    }
+    removeAllPlayerClasses()
+    dude += 20
+    cells[dude].classList.add('dude-down')
+  }
+
+  function movePlayerLeft() {
+    if (dude === 200) {
+      removeAllPlayerClasses()
+      dude += 19
+      cells[dude].classList.add('dude-left')
+    } else if (wallCells.includes(dude - 1)) {
+      return
+    }
+    removeAllPlayerClasses()
+    dude -= 1
+    cells[dude].classList.add('dude-left')
+  }
+
+
+  function removeAllPlayerClasses() {
+    cells[dude].classList.remove('dude-right')
+    cells[dude].classList.remove('dude-up')
+    cells[dude].classList.remove('dude-down')
+    cells[dude].classList.remove('dude-left')
+  }
+
+
   startGame(numOfGhostsInGame)
 
   function startGame(numberOfGhosts) {
@@ -447,7 +544,7 @@ function main() {
     createGhost(208)
     createGhost(209)
     createGhost(210)
-    // createGhost(211)
+    createGhost(211)
 
     setInterval(() => {
       if ((numberOfGhosts - 4) > 0) {
@@ -459,69 +556,16 @@ function main() {
 
     intervalId = setInterval(() => {
 
-      if ((ghosts[0].ghostClass === ghosts[0].name)) { // THIS MAKES SURE WHILE GHOSTS ARE EATABLE THEY CAN NOT BE RELEASED FROM PEN. THIS MAY NEED TO BE CHANGED
+      // if ((ghosts[0].ghostClass === ghosts[0].name)) { // THIS MAKES SURE WHILE GHOSTS ARE EATABLE THEY CAN NOT BE RELEASED FROM PEN. THIS MAY NEED TO BE CHANGED
+      if (!((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) {
         releaseGhosts()
       }
       moveGhosts()
 
     }, ghostSpeed * 1000)
 
-    intervalId2 = setInterval(() => {
+    startPlayerInterval(playerSpeed)
 
-      //INTERVAL 2 - LOGIC CONTROLL FOR PLAYER --- USES THE PLAYED DIRECTION VARIABLE TO MOVRE THE PLAYER ONE SQUARE AT EACH INTERVAL
-
-      if (playerDirection === 2) {
-        if (dude === 219) {
-          cells[dude].classList.remove('dude')
-          dude -= 19
-          cells[dude].classList.add('dude')
-
-        } else if (wallCells.includes(dude + 1)) {
-          return
-        }
-        cells[dude].classList.remove('dude')
-        dude += 1
-        cells[dude].classList.add('dude')
-        // removeFoodIncrementScore(dude)
-        // removeSuperFoodActivateChase(dude)
-
-      } else if (playerDirection === 4) {
-        if (dude === 200) {
-          cells[dude].classList.remove('dude')
-          dude += 19
-          cells[dude].classList.add('dude')
-        } else if (wallCells.includes(dude - 1)) {
-          return
-        }
-        cells[dude].classList.remove('dude')
-        dude -= 1
-        cells[dude].classList.add('dude')
-        // removeFoodIncrementScore(dude)
-        // removeSuperFoodActivateChase(dude)
-
-      } else if (playerDirection === 3) {
-        if (wallCells.includes(dude + 20)) {
-          return
-        }
-        cells[dude].classList.remove('dude')
-        dude += 20
-        cells[dude].classList.add('dude')
-        // removeFoodIncrementScore(dude)
-        // removeSuperFoodActivateChase(dude)
-
-      } else if (playerDirection === 1) {
-        if (wallCells.includes(dude - 20)) {
-          return
-        }
-        cells[dude].classList.remove('dude')
-        dude -= 20
-        cells[dude].classList.add('dude')
-        // removeFoodIncrementScore(dude)
-        // removeSuperFoodActivateChase(dude)
-
-      }
-
-    }, playerSpeed * 1000)
 
     //THIS INTERVAL RUNS VERY QUICKLY AND CONTINUALLY CHECKS TO SEE IF THE GAME IS OVER OR IF THE PLAYER HAS WON
 

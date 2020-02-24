@@ -27,29 +27,50 @@ body {
 .cell {
   width: 5%;
   height: 5%;
-  border: 1px solid red
+  border: 1px solid red;
 }
 
 .wall {
   background-color: black;
+
 }
 
 .food {
+  /* background-image: url(images/OJS.png); */
   background-image: url(images/food-dot-black.png);
-  background-size: 10px;
+  background-size: 15px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .superFood {
+  /* background-image: url(images/bolt-from-the-blue.png); */
   background-image: url(images/food-dot.png);
-  background-size: 10px;
+  background-size: 20px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.dude {
+.dude-right {
   background-image: url(images/pac-man.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-left {
+  background-image: url(images/pac-man-left.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-up {
+  background-image: url(images/pac-man-up.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-down {
+  background-image: url(images/pac-man-down.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
