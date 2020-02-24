@@ -17,9 +17,13 @@ function main() {
   let intervalId
   let intervalId2
   let intervalId3
+  let playerIsHunter = false
+  const eatenGhosts = []
   let ghostEatableTimer
+  let ghostReleaseTimer
   const ghostSpeed = 0.5
   const playerSpeed = 0.5
+  let lives = 2
   const numOfGhostsInGame = 3
   const secondsBetweenNewGhostGeneration = 8
   const secondsBetweenGhostRelease = 3
@@ -298,7 +302,7 @@ function main() {
 
 
   function startGhostReleaseTimer() {
-    setTimeout(() => {
+    ghostReleaseTimer = setTimeout(() => {
       if (ghostPenOccupied.length > 0) {
         ghosts.map((element) => {
           if (element.currentCell === ghostPenOccupied[0]) {
@@ -352,8 +356,7 @@ function main() {
     }
   }
 
-  let playerIsHunter = false
-  const eatenGhosts = []
+  
 
   function removeSuperFoodActivateChase(cellNum) {
 
@@ -364,6 +367,8 @@ function main() {
       }
       cells[cellNum].classList.remove('superFood')
 
+      clearTimeout(ghostReleaseTimer)
+      ghostReleaseCountdownActive = false //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
       clearInterval(intervalId2)
       startPlayerInterval(playerSpeed / 1.4)
 
@@ -395,14 +400,11 @@ function main() {
       }, timeGhostsRemainEatable * 1000)
 
     }
-
-
-
     // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
     ghosts.map((element) => {
 
       // if (cells[element.currentCell].classList.contains('dude') || cells[element.cellJustLeft].classList.contains('dude')) {
-      if ((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft)) {
+      if (((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft)) && element.ghostClass === 'eatableBlue') {
         eatenGhosts.push(element.name)
         score += 100
         cells[161].innerHTML = score
@@ -433,12 +435,52 @@ function main() {
         if (cells[dude].classList.contains(element.name) || doesCellContainDude(element.cellJustLeft)) {
 
           // cells[element.cellJustLeft].doesCellContainDude(element.cellJustLeft)) {
+          clearInterval(intervalId3)
           clearInterval(intervalId2)
           clearInterval(intervalId)
-          clearInterval(intervalId3)
-          alert(`GAME OVER! You scored ${score}...`)
+          lives--
+          console.log(lives)
+
+          if (livesDoRemain()) {
+            resetAfterLifeLost()
+          } else {
+            alert(`GAME OVER! You scored ${score}...`)
+
+          }
         }
       })
+  }
+
+  function resetAfterLifeLost() {
+    removeGhostsFromGame()
+    movePlayerToStartingLocation()
+
+    setTimeout(() => {
+      startGame(numOfGhostsInGame)
+    }, 3000)
+  
+
+  }
+
+  function movePlayerToStartingLocation() {
+    removeAllPlayerClasses()
+    dude = 250
+    cells[250].classList.add('dude-right')
+  }
+
+
+  function removeGhostsFromGame() {
+    ghosts.map((element) => cells[element.currentCell].classList.remove(element.ghostClass))
+
+    for (let i = 0; i < numOfGhostsInGame + 1; i++) { //// REMOVE ALL GHOSTS FROM THE GAME
+      ghosts.pop()
+    }
+  }
+
+  function livesDoRemain() {
+    if (lives !== 0) {
+      return true
+    }
   }
 
   function checkForGameWon() {
@@ -535,6 +577,8 @@ function main() {
     cells[dude].classList.remove('dude-down')
     cells[dude].classList.remove('dude-left')
   }
+
+
 
 
   startGame(numOfGhostsInGame)
