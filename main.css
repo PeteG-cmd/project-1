@@ -124,7 +124,7 @@ body {
 }
 
 .eatableBlue {
-  background-image: url(images/ghost-blue.png);
+  background-image: url(images/ghost-blue-big.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -134,4 +134,16 @@ body {
   /* font-size: 40px;
   overflow: auto;
   white-space: nowrap; */
+}
+
+.life {
+  background-image: url(images/life-pixelated.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.returningGhost {
+  background-image: url(images/ghost-blue.png);
+  background-size: contain;
+  background-repeat: no-repeat;
 }

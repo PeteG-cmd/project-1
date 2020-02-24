@@ -17,6 +17,7 @@ function main() {
   let intervalId
   let intervalId2
   let intervalId3
+  let returningGhostInterval
   let playerIsHunter = false
   const eatenGhosts = []
   let ghostEatableTimer
@@ -30,6 +31,7 @@ function main() {
   const searchWidth = 8
   const chanceOfGhostMovingSmartly = 75 // this is as a percentage
   const timeGhostsRemainEatable = 10
+  const lifeCells = [177, 178, 179]
 
 
   const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 160, 161, 162, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
@@ -356,10 +358,9 @@ function main() {
     }
   }
 
-  
+
 
   function removeSuperFoodActivateChase(cellNum) {
-
 
     if (cells[cellNum].classList.contains('superFood')) {
       if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
@@ -379,11 +380,9 @@ function main() {
         if (!(ghostPenOccupied.includes(element.currentCell))) {
           cells[element.currentCell].classList.remove(element.name)
           cells[element.currentCell].classList.add('eatableBlue')
-
           element.ghostClass = 'eatableBlue'
         }
       })
-
 
       ghostEatableTimer = setTimeout(() => {
         playerIsHunter = false
@@ -403,24 +402,114 @@ function main() {
     // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
     ghosts.map((element) => {
 
-      // if (cells[element.currentCell].classList.contains('dude') || cells[element.cellJustLeft].classList.contains('dude')) {
       if (((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft)) && element.ghostClass === 'eatableBlue') {
+
+
         eatenGhosts.push(element.name)
         score += 100
         cells[161].innerHTML = score
         cells[element.currentCell].classList.remove(element.ghostClass)
+
+        const path = calculateGhostReturnPath(element.currentCell) /////////////////////
+
         element.currentCell = (ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
         ghostPenOccupied.push(element.currentCell) // THIS IS MAKING SURE THE NEXT GHOST EATEN DOESNT GO TO THE SAME CELL
         element.ghostClass = element.name
-        cells[element.currentCell].classList.add(element.ghostClass)
         element.directionMoving = ''
         element.availableDirections = []
         element.cellOnPath = ''
         element.cellJustLeft = element.currentCell
+        /////////////
+        // cells[element.currentCell].classList.add(element.ghostClass)
+        sendEatanGhostOnPath(path, element.currentCell)
 
+        /////////////
+        
 
       }
     })
+  }
+
+  function sendEatanGhostOnPath(path, ghostCell) {
+
+    returningGhostInterval = setInterval(() => {
+      if (path.length > 1) {
+        cells[path[0]].classList.remove('returningGhost')
+        cells[path[1]].classList.add('returningGhost')
+      }
+      path.shift()
+      if (path.length === 1) {
+        cells[path[0]].classList.remove('returningGhost')
+        ghosts.map((element) => {
+          if (element.currentCell === ghostCell) {
+            cells[element.currentCell].classList.add(element.ghostClass)
+          }
+        })
+
+        clearInterval(returningGhostInterval)
+      }
+    }, 100)
+
+  }
+
+
+  function calculateGhostReturnPath(currentGhostCell) { ///THIS IS WHAT I AM WORKING ON /////////////////
+
+    let pathBackToPen
+    const queue = []
+    const target = 249
+
+    queue.push(new Location(currentGhostCell, [currentGhostCell]))
+    let pathNotFound = true
+
+    while (pathNotFound) {
+      const checkCell = queue.shift()
+
+      // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN A 10 CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
+
+      if (checkCell.cellNumber === target) {
+        pathNotFound = false
+        pathBackToPen = checkCell.path
+      }
+
+      // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH OF LENGTH 1 ,2, 3 etc, UNTIL IT FINDS THE TARGET
+
+      if (!(wallCells.includes(checkCell.cellNumber + 1)) && (!(checkCell.path.includes(checkCell.cellNumber + 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+        checkCell.path.push(checkCell.cellNumber + 1)
+        const newPath = checkCell.path.slice()
+        queue.push(new Location(checkCell.cellNumber + 1, newPath))
+        checkCell.path.pop()
+        // console.log('Checking right')
+      }
+      if (!(wallCells.includes(checkCell.cellNumber - 1)) && (!(checkCell.path.includes(checkCell.cellNumber - 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+        checkCell.path.push(checkCell.cellNumber - 1)
+        const newPath = checkCell.path.slice()
+        queue.push(new Location(checkCell.cellNumber - 1, newPath))
+        checkCell.path.pop()
+        // console.log('Checking left')
+
+      }
+      if (!(wallCells.includes(checkCell.cellNumber + width)) && (!(checkCell.path.includes(checkCell.cellNumber + width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+        checkCell.path.push(checkCell.cellNumber + width)
+        const newPath = checkCell.path.slice()
+        queue.push(new Location(checkCell.cellNumber + width, newPath))
+        checkCell.path.pop()
+        // console.log('Checking down')
+      }
+      if (!(wallCells.includes(checkCell.cellNumber - width)) && (!(checkCell.path.includes(checkCell.cellNumber - width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+
+        checkCell.path.push(checkCell.cellNumber - width)
+        const newPath = checkCell.path.slice()
+        queue.push(new Location(checkCell.cellNumber - width, newPath))
+        checkCell.path.pop()
+        // console.log('Checking up')
+      }
+
+    }
+    return pathBackToPen
+
   }
 
   function doesCellContainDude(cellToCheck) {
@@ -444,7 +533,9 @@ function main() {
           if (livesDoRemain()) {
             resetAfterLifeLost()
           } else {
+            displayLives(lives)
             alert(`GAME OVER! You scored ${score}...`)
+            // activateInitialStart()
 
           }
         }
@@ -454,11 +545,12 @@ function main() {
   function resetAfterLifeLost() {
     removeGhostsFromGame()
     movePlayerToStartingLocation()
+    displayLives(lives)
 
     setTimeout(() => {
       startGame(numOfGhostsInGame)
     }, 3000)
-  
+
 
   }
 
@@ -472,7 +564,7 @@ function main() {
   function removeGhostsFromGame() {
     ghosts.map((element) => cells[element.currentCell].classList.remove(element.ghostClass))
 
-    for (let i = 0; i < numOfGhostsInGame + 1; i++) { //// REMOVE ALL GHOSTS FROM THE GAME
+    for (let i = 0; i < numOfGhostsInGame + 1; i++) { //// REMOVE ALL GHOSTS FROM THE GAME 
       ghosts.pop()
     }
   }
@@ -482,6 +574,17 @@ function main() {
       return true
     }
   }
+
+  function displayLives(numOfLives) {
+    lifeCells.map((element) => {
+      cells[element].classList.remove('life')
+      cells[element].classList.remove('wall')
+    })
+    for (let i = 0; i < numOfLives; i++) {
+      cells[lifeCells[i]].classList.add('life')
+    }
+  }
+
 
   function checkForGameWon() {
     const foodRemaining = cells.some((cell) => {
@@ -584,6 +687,8 @@ function main() {
   startGame(numOfGhostsInGame)
 
   function startGame(numberOfGhosts) {
+
+    displayLives(lives)
 
     createGhost(208)
     createGhost(209)
