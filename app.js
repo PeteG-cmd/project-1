@@ -679,10 +679,7 @@ function main() {
     removeAllPlayerClasses()
     dude -= width
     cells[dude].classList.add('dude-up')
-    if (!(wallCells.includes(dude - width))) {
-      cells[dude].classList.add('animate-dude-up')
-    }
-
+    cells[dude].classList.add('animate-dude-up')
   }
 
   function movePlayerRight() {
@@ -697,9 +694,7 @@ function main() {
     removeAllPlayerClasses()
     dude += 1
     cells[dude].classList.add('dude-right')
-    if (!(wallCells.includes(dude + 1))) {
-      cells[dude].classList.add('animate-dude-right')
-    }
+    cells[dude].classList.add('animate-dude-right')
   }
 
   function movePlayerDown() {
@@ -709,9 +704,7 @@ function main() {
     removeAllPlayerClasses()
     dude += width
     cells[dude].classList.add('dude-down')
-    if (!(wallCells.includes(dude + width))) {
-      cells[dude].classList.add('animate-dude-down')
-    }
+    cells[dude].classList.add('animate-dude-down')
   }
 
   function movePlayerLeft() {
@@ -725,9 +718,7 @@ function main() {
     removeAllPlayerClasses()
     dude -= 1
     cells[dude].classList.add('dude-left')
-    if (!(wallCells.includes(dude - 1))) {
-      cells[dude].classList.add('animate-dude-left')
-    }
+    cells[dude].classList.add('animate-dude-left')
   }
 
 

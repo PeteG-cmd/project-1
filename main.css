@@ -158,10 +158,10 @@ body {
 
 @keyframes move-dude-right {
   0% {
-    transform: translate(0);
+    transform: translate(-100%, 0);
   }
   100% {
-    transform: translate(100%, 0);
+    transform: translate(0);
   }
 }
 
@@ -171,10 +171,10 @@ body {
 
 @keyframes move-dude-left {
   0% {
-    transform: translate(0);
+    transform: translate(100%, 0);
   }
   100% {
-    transform: translate(-100%, 0);
+    transform: translate(0);
   }
 }
 
@@ -184,10 +184,10 @@ body {
 
 @keyframes move-dude-up {
   0% {
-    transform: translate(0);
+    transform: translate(0, 100%);
   }
   100% {
-    transform: translate(0, -100%);
+    transform: translate(0);
   }
 }
 
@@ -197,10 +197,10 @@ body {
 
 @keyframes move-dude-down {
   0% {
-    transform: translate(0);
+    transform: translate(0, -100%);
   }
   100% {
-    transform: translate(0, 100%);
+    transform: translate(0);
   }
 }
 
