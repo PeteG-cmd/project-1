@@ -29,7 +29,7 @@ function main() {
   const numOfGhostsInGame = 3
   const secondsBetweenNewGhostGeneration = 8
   let secondsBetweenGhostRelease = 3
-  let searchWidth = 9
+  let searchWidth = 7
   let chanceOfGhostMovingSmartly = 80 // this is as a percentage
   const timeGhostsRemainEatable = 10
   const lifeCells = [177, 178, 179]
@@ -131,18 +131,20 @@ function main() {
           cells[this.currentCell].classList.add(this.ghostClass)
         } else if (this.currentCell !== 209) {
 
-          if (this.cellOnPath !== '' && this.willFindCellOnPath() === true) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN
-            // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
+          if (this.cellOnPath !== '' && this.willFindCellOnPath() === true && playerIsHunter === false) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN. IT ALSO STOPS THE GHOST MOVING ON THE PATH IF THE PLAYER IS THE HUNETER
 
+            // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
             this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
 
-            cells[this.currentCell].classList.remove(this.ghostClass)
+            // cells[this.currentCell].classList.remove(this.ghostClass)
+            this.removeAllGhostClasses()
             this.cellJustLeft = this.currentCell
             console.log('Ghost Moving to Smartly to Cell on Direct Path:')
             console.log(this.cellOnPath)
             this.currentCell = this.cellOnPath
             this.cellOnPath = ''
             cells[this.currentCell].classList.add(this.ghostClass)
+            this.addGhostAnimationClassNeeded()
             this.availableDirections = []
 
           } else {
@@ -154,18 +156,44 @@ function main() {
 
             this.directionMoving = this.findDirectionMoving(this.currentCell, this.availableDirections[parseInt(nextCellGhost)])
 
-            cells[this.currentCell].classList.remove(this.ghostClass)
+            // cells[this.currentCell].classList.remove(this.ghostClass)
+            this.removeAllGhostClasses()
             this.cellJustLeft = this.currentCell
             console.log('Ghost moving from current cell, which is:')
             console.log(this.currentCell)
             this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
             this.cellOnPath = '' // THIS IS NEEDED AS IF BY CHANCE THE GHOST STOPS FOLLOWING THE PATH, I NEED TO ERASE THE PATH FOR THE GHOST TO FIND AGAIN
             cells[this.currentCell].classList.add(this.ghostClass)
+            this.addGhostAnimationClassNeeded()
             this.availableDirections = []
           }
         }
       }
 
+    }
+
+    // THIS FUNCTIONALITY IS NOT ACTIVE AT THE MOMENT AS IS AFFECTING PERFORMANCE TOO MUCH
+    addGhostAnimationClassNeeded() {
+      if (this.directionMoving === 1) {
+        cells[this.currentCell].classList.add('animate-ghost-up')
+      }
+      if (this.directionMoving === 2) {
+        cells[this.currentCell].classList.add('animate-ghost-right')
+      }
+      if (this.directionMoving === 3) {
+        cells[this.currentCell].classList.add('animate-ghost-down')
+      }
+      if (this.directionMoving === 4) {
+        cells[this.currentCell].classList.add('animate-ghost-left')
+      }
+    }
+
+    removeAllGhostClasses() {
+      cells[this.currentCell].classList.remove(this.ghostClass)
+      cells[this.currentCell].classList.remove('animate-ghost-down')
+      cells[this.currentCell].classList.remove('animate-ghost-right')
+      cells[this.currentCell].classList.remove('animate-ghost-left')
+      cells[this.currentCell].classList.remove('animate-ghost-up')
     }
 
 
@@ -309,7 +337,7 @@ function main() {
       if (ghostPenOccupied.length > 0) {
         ghosts.map((element) => {
           if (element.currentCell === ghostPenOccupied[0]) {
-            cells[element.currentCell].classList.remove(element.ghostClass)
+            cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
             cells[element.currentCell].classList.remove('eatableBlue')
             element.currentCell -= 40
             eatenGhosts.shift() //THIS REACTIVATES THE PATH FINDING OF THE GHOST
@@ -371,8 +399,10 @@ function main() {
 
       clearTimeout(ghostReleaseTimer)
       ghostReleaseCountdownActive = false //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
-      clearInterval(intervalId2)
-      startPlayerInterval(playerSpeed / 1.4)
+
+      //THESE 2 BELOW LINES THAT ARE COMMENTED OUT DID INCREASE THE PLAYER SPEED, BUT THIS HAS BEEN DISABLED FOR SMOOTH MOVEMENT FOR THE MOMENT
+      // clearInterval(intervalId2)
+      // startPlayerInterval(playerSpeed / 1.4)
 
       score += 50
       cells[161].innerHTML = score
@@ -393,9 +423,9 @@ function main() {
           cells[element.currentCell].classList.add(element.name)
 
         })
-
-        clearInterval(intervalId2)
-        startPlayerInterval(playerSpeed)
+        // AGAIN, BELOW 2 LINES DISABLED FOR TESTING OF SMOOTH MOVEMENT POURPOSES
+        // clearInterval(intervalId2)
+        // startPlayerInterval(playerSpeed)
 
       }, timeGhostsRemainEatable * 1000)
 
@@ -409,7 +439,7 @@ function main() {
         eatenGhosts.push(element.name)
         score += 100
         cells[161].innerHTML = score
-        cells[element.currentCell].classList.remove(element.ghostClass)
+        cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
 
         const path = calculateGhostReturnPath(element.currentCell)
 
@@ -442,8 +472,6 @@ function main() {
             cells[element.currentCell].classList.add(element.ghostClass)
           }
         })
-
-        // clearInterval(returningGhostInterval)
       }
     }, 100)
 
@@ -578,7 +606,7 @@ function main() {
 
 
   function removeGhostsFromGame() {
-    ghosts.map((element) => cells[element.currentCell].classList.remove(element.ghostClass))
+    ghosts.map((element) => cells[element.currentCell].classList.remove(element.removeAllGhostClasses()))
 
     for (let i = 0; i < numOfGhostsInGame + 1; i++) { //// REMOVE ALL GHOSTS FROM THE GAME 
       ghosts.pop()

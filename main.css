@@ -150,7 +150,7 @@ body {
 
 
 
-
+/* THIS HANDLES MOVING THE PALYER SMOOTHLY */
 
 .animate-dude-right {
   animation: move-dude-right 0.5s linear;
@@ -203,5 +203,62 @@ body {
     transform: translate(0);
   }
 }
+
+
+/* THIS HANDLES MOVING THE GHOSTS SMOOTHLY */
+
+.animate-ghost-right {
+  animation: move-ghost-right 0.5s linear;
+}
+
+@keyframes move-ghost-right {
+  0% {
+    transform: translate(-100%, 0);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-ghost-left {
+  animation: move-ghost-left 0.5s linear;
+}
+
+@keyframes move-ghost-left {
+  0% {
+    transform: translate(100%, 0);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-ghost-up {
+  animation: move-ghost-up 0.5s linear;
+}
+
+@keyframes move-ghost-up {
+  0% {
+    transform: translate(0, 100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-ghost-down {
+  animation: move-ghost-down 0.5s linear;
+}
+
+@keyframes move-ghost-down {
+  0% {
+    transform: translate(0, -100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+  
 
   
