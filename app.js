@@ -8,6 +8,7 @@ function main() {
   const grid = document.querySelector('.grid')
   const cells = []
   let score = 0
+  let level = 1
   let dude = 250
   let playerDirection
   const ghosts = []
@@ -27,9 +28,9 @@ function main() {
   let lives = 2
   const numOfGhostsInGame = 3
   const secondsBetweenNewGhostGeneration = 8
-  const secondsBetweenGhostRelease = 3
-  const searchWidth = 8
-  const chanceOfGhostMovingSmartly = 75 // this is as a percentage
+  let secondsBetweenGhostRelease = 3
+  let searchWidth = 9
+  let chanceOfGhostMovingSmartly = 80 // this is as a percentage
   const timeGhostsRemainEatable = 10
   const lifeCells = [177, 178, 179]
 
@@ -410,7 +411,7 @@ function main() {
         cells[161].innerHTML = score
         cells[element.currentCell].classList.remove(element.ghostClass)
 
-        const path = calculateGhostReturnPath(element.currentCell) /////////////////////
+        const path = calculateGhostReturnPath(element.currentCell)
 
         element.currentCell = (ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
         ghostPenOccupied.push(element.currentCell) // THIS IS MAKING SURE THE NEXT GHOST EATEN DOESNT GO TO THE SAME CELL
@@ -419,12 +420,8 @@ function main() {
         element.availableDirections = []
         element.cellOnPath = ''
         element.cellJustLeft = element.currentCell
-        /////////////
-        // cells[element.currentCell].classList.add(element.ghostClass)
-        sendEatanGhostOnPath(path, element.currentCell)
 
-        /////////////
-        
+        sendEatanGhostOnPath(path, element.currentCell)
 
       }
     })
@@ -446,7 +443,7 @@ function main() {
           }
         })
 
-        clearInterval(returningGhostInterval)
+        // clearInterval(returningGhostInterval)
       }
     }, 100)
 
@@ -527,6 +524,7 @@ function main() {
           clearInterval(intervalId3)
           clearInterval(intervalId2)
           clearInterval(intervalId)
+          clearInterval(returningGhostInterval)
           lives--
           console.log(lives)
 
@@ -535,11 +533,29 @@ function main() {
           } else {
             displayLives(lives)
             alert(`GAME OVER! You scored ${score}...`)
-            // activateInitialStart()
+        
+            goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
 
           }
         }
       })
+  }
+
+  function checkForGameWon() {
+    const foodRemaining = cells.some((cell) => {
+      return cell.classList.contains('food')
+    })
+    const superFoodRemaining = cells.some((cell) => {
+      return cell.classList.contains('superFood')
+    })
+    if ((!(foodRemaining)) && (!(superFoodRemaining))) {
+      clearInterval(intervalId2)
+      clearInterval(intervalId)
+      clearInterval(intervalId3)
+      clearInterval(returningGhostInterval)
+      alert(`LEVEL COMPLETE! You scored ${score}...`)
+      beginNextLevel()
+    }
   }
 
   function resetAfterLifeLost() {
@@ -575,6 +591,48 @@ function main() {
     }
   }
 
+  function beginNextLevel() {
+    if (level === 1 || level === 2) {
+      level++
+      secondsBetweenGhostRelease -= 1
+      chanceOfGhostMovingSmartly += 5
+      searchWidth += 1
+
+      removeGhostsFromGame()
+      movePlayerToStartingLocation()
+      displayLives(lives)
+      resetGameBoard()
+
+
+      setTimeout(() => {
+        startGame(numOfGhostsInGame)
+      }, 3000)
+
+    } else {
+      goToScoreBoard()
+
+    }
+  }
+
+  function goToScoreBoard() {
+    alert('This should take you to the score board')
+  }
+
+
+
+  function resetGameBoard() {
+    for (let i = 0; i < cells.length; i++) {
+      if (!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) {
+        cells[i].classList.add('food')
+      }
+
+      if ((!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) && (superFoodCells.includes(i))) {
+        cells[i].classList.remove('food')
+        cells[i].classList.add('superFood')
+      }
+    }
+  }
+
   function displayLives(numOfLives) {
     lifeCells.map((element) => {
       cells[element].classList.remove('life')
@@ -586,20 +644,7 @@ function main() {
   }
 
 
-  function checkForGameWon() {
-    const foodRemaining = cells.some((cell) => {
-      return cell.classList.contains('food')
-    })
-    const superFoodRemaining = cells.some((cell) => {
-      return cell.classList.contains('superFood')
-    })
-    if ((!(foodRemaining)) && (!(superFoodRemaining))) {
-      clearInterval(intervalId2)
-      clearInterval(intervalId)
-      clearInterval(intervalId3)
-      alert(`LEVEL COMPLETE! You scored ${score}...`)
-    }
-  }
+  
 
   function startPlayerInterval(playSpeed) {
 
@@ -687,6 +732,7 @@ function main() {
   startGame(numOfGhostsInGame)
 
   function startGame(numberOfGhosts) {
+
 
     displayLives(lives)
 
