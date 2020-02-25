@@ -533,7 +533,7 @@ function main() {
           } else {
             displayLives(lives)
             alert(`GAME OVER! You scored ${score}...`)
-        
+
             goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
 
           }
@@ -644,7 +644,7 @@ function main() {
   }
 
 
-  
+
 
   function startPlayerInterval(playSpeed) {
 
@@ -673,12 +673,15 @@ function main() {
 
 
   function movePlayerUp() {
-    if (wallCells.includes(dude - 20)) {
+    if (wallCells.includes(dude - width)) {
       return
     }
     removeAllPlayerClasses()
-    dude -= 20
+    dude -= width
     cells[dude].classList.add('dude-up')
+    if (!(wallCells.includes(dude - width))) {
+      cells[dude].classList.add('animate-dude-up')
+    }
 
   }
 
@@ -694,15 +697,21 @@ function main() {
     removeAllPlayerClasses()
     dude += 1
     cells[dude].classList.add('dude-right')
+    if (!(wallCells.includes(dude + 1))) {
+      cells[dude].classList.add('animate-dude-right')
+    }
   }
 
   function movePlayerDown() {
-    if (wallCells.includes(dude + 20)) {
+    if (wallCells.includes(dude + width)) {
       return
     }
     removeAllPlayerClasses()
-    dude += 20
+    dude += width
     cells[dude].classList.add('dude-down')
+    if (!(wallCells.includes(dude + width))) {
+      cells[dude].classList.add('animate-dude-down')
+    }
   }
 
   function movePlayerLeft() {
@@ -716,6 +725,9 @@ function main() {
     removeAllPlayerClasses()
     dude -= 1
     cells[dude].classList.add('dude-left')
+    if (!(wallCells.includes(dude - 1))) {
+      cells[dude].classList.add('animate-dude-left')
+    }
   }
 
 
@@ -724,6 +736,11 @@ function main() {
     cells[dude].classList.remove('dude-up')
     cells[dude].classList.remove('dude-down')
     cells[dude].classList.remove('dude-left')
+    cells[dude].classList.remove('animate-dude-up')
+    cells[dude].classList.remove('animate-dude-down')
+    cells[dude].classList.remove('animate-dude-right')
+    cells[dude].classList.remove('animate-dude-left')
+
   }
 
 

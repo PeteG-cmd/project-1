@@ -147,3 +147,61 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+
+
+
+
+.animate-dude-right {
+  animation: move-dude-right 0.5s linear;
+}
+
+@keyframes move-dude-right {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(100%, 0);
+  }
+}
+
+.animate-dude-left {
+  animation: move-dude-left 0.5s linear;
+}
+
+@keyframes move-dude-left {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+.animate-dude-up {
+  animation: move-dude-up 0.5s linear;
+}
+
+@keyframes move-dude-up {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(0, -100%);
+  }
+}
+
+.animate-dude-down {
+  animation: move-dude-down 0.5s linear;
+}
+
+@keyframes move-dude-down {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translate(0, 100%);
+  }
+}
+
+  
