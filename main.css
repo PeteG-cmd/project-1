@@ -5,12 +5,13 @@
 body {
   height: 96vh;
   background-color: black;
+  padding: 15px 15px 15px 15px;
 }
 
 .mainDiv {
   height: 100vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-direction: row;
   margin: 0;
@@ -19,13 +20,61 @@ body {
 
 .scoresDiv {
   height: 100vh;
+  width: 200px;
   display: flex;
   flex-direction: column;
   border: 1px solid white;
-  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
 }
 
-h1 {color: white;}
+.scorePanel {
+  width: 90%;
+  height: 9%;
+  border: 1px solid red;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 5px;
+}
+
+p {
+  color: white;
+  display: inline;
+
+
+}
+
+.infoDiv {
+  height: 100vh;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.infoPanel {
+  width: 90%;
+  height: 9%;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+}
+
+.infoPanel img {
+  height: 100%;
+  width: 35%;
+}
+
+.infoPanel p {
+  font-size: 20px;
+  text-align: center;
+}
 
 .grid {
   display: flex;
@@ -38,13 +87,7 @@ h1 {color: white;}
   
 }
 
-.infoDiv {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid white;
-  flex-grow: 1;
-}
+
 
 .cell {
   width: 5%;

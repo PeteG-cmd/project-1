@@ -49,6 +49,62 @@ function main() {
   const superFoodFreezeCells = [126, 336]
   const superFoodSpeedCells = [35, 204]
 
+
+  //INITIALISE SCORE BOARD
+
+  const scores = []
+  const scoreBoard = document.querySelector('.scoresDiv')
+
+  for (let i = 0; i < 9; i++) {
+    const scorePanel = document.createElement('div')
+    scorePanel.classList.add('scorePanel')
+    scorePanel.id = 'scorePanel' + i
+    const playerNameSection = document.createElement('p')
+    const playerScoreSection = document.createElement('p')
+
+    playerNameSection.innerHTML = 'Player ' + (i + 1)
+    playerScoreSection.innerHTML = i * 100
+
+    scorePanel.appendChild(playerNameSection)
+    scorePanel.appendChild(playerScoreSection)
+
+    scoreBoard.appendChild(scorePanel)
+    scores.push(scorePanel)
+  }
+
+  //INITIALISE INFO BOARD
+
+  const infos = []
+  const infoBoard = document.querySelector('.infoDiv')
+  const superFoods = ['bolt from the blue', 'wonder green', 'berry.. set... GO!']
+  const superFoodColor = ['rgb(47, 188, 204)', 'rgb(39, 184, 130)', 'rgb(219, 83, 59)']
+  const superFoodPower = ['HUNT', 'FREEZE', 'SPEED']
+  const superFoodGraphics = ['images/bolt-from-the-blue-1.png', 'images/wonder-green.png', 'images/berry-set-go.png']
+
+  for (let i = 0; i < superFoods.length; i++) {
+    const infoPanel = document.createElement('div')
+    infoPanel.classList.add('infoPanel')
+    infoPanel.id = 'infoPanel' + i
+    const superFoodGraphic = document.createElement('img')
+    const superFoodDescription = document.createElement('p')
+
+    superFoodGraphic.src = superFoodGraphics[i]
+    superFoodDescription.innerHTML = superFoods[i]
+    superFoodDescription.innerHTML += '<br>'
+    superFoodDescription.innerHTML += '= ' + superFoodPower[i] + '...'
+
+    superFoodDescription.style.color = superFoodColor[i]
+
+    infoPanel.appendChild(superFoodGraphic)
+    infoPanel.appendChild(superFoodDescription)
+
+    infoBoard.appendChild(infoPanel)
+    infos.push(infoBoard)
+  }
+
+
+
+
   //INITIALISE MAP
 
   for (let i = 0; i < gridCellCount; i++) {
@@ -598,7 +654,8 @@ function main() {
       ghosts.map((element) => {
         if (!(ghostPenOccupied.includes(element.currentCell))) {
           cells[element.currentCell].classList.add('freezeBlue')
-          
+          element.cellJustLeft = element.currentCell ///////////////////////////////////////////////////////
+
         }
       })
 
@@ -609,7 +666,7 @@ function main() {
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
             cells[element.currentCell].classList.remove('freezeBlue')
-            
+
           }
         })
 
@@ -715,9 +772,9 @@ function main() {
     displayLives(lives)
     playerDirection =
 
-    setTimeout(() => {
-      startGame(numOfGhostsInGame)
-    }, 3000)
+      setTimeout(() => {
+        startGame(numOfGhostsInGame)
+      }, 3000)
 
 
   }
@@ -754,12 +811,12 @@ function main() {
       movePlayerToStartingLocation()
       displayLives(lives)
       resetGameBoard()
-      playerDirection = 
+      playerDirection =
 
 
-      setTimeout(() => {
-        startGame(numOfGhostsInGame)
-      }, 3000)
+        setTimeout(() => {
+          startGame(numOfGhostsInGame)
+        }, 3000)
 
     } else {
       goToScoreBoard()
