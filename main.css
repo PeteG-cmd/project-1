@@ -18,6 +18,29 @@ body {
   border: 1px solid red;
 }
 
+.playerInputDiv {
+  height: 70vh;
+  width: 90vw;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  border: 1px solid red;
+  margin: auto;
+}
+
+.playButton {
+  height: 10%;
+  width: 40%;
+  border: 1px solid white;
+  border-radius: 8px;
+  color: white;
+  background-color: black;
+  font-size: 40px;
+}
+
+
 .scoresDiv {
   height: 100vh;
   width: 200px;
@@ -26,6 +49,11 @@ body {
   border: 1px solid white;
   justify-content: center;
   align-items: center;
+}
+
+.scoresDiv img {
+  width: 100%;
+  /* margin: -10px; */
 }
 
 .scorePanel {
@@ -68,7 +96,6 @@ p {
 
 .infoPanel img {
   height: 100%;
-  width: 35%;
 }
 
 .infoPanel p {

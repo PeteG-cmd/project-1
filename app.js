@@ -50,10 +50,32 @@ function main() {
   const superFoodSpeedCells = [35, 204]
 
 
+  //Set up how the game should start
+
+  const mainGameScreen = document.querySelector('.mainDiv')
+  const playerNameInputScreen = document.querySelector('.playerInputDiv')
+  const startGameButton = document.querySelector('.playButton')
+  
+  mainGameScreen.style.display = 'none'
+  
+
+  startGameButton.addEventListener('click', () => {
+
+    const playerName = document.querySelector('.playerName')
+    playerNameInputScreen.style.display = 'none'
+    mainGameScreen.style.display = 'flex'
+    const player = { name: playerName, score: score }
+
+  })
+
+
+
   //INITIALISE SCORE BOARD
 
   const scores = []
   const scoreBoard = document.querySelector('.scoresDiv')
+
+
 
   for (let i = 0; i < 9; i++) {
     const scorePanel = document.createElement('div')
@@ -163,6 +185,8 @@ function main() {
       return true
     }
   }
+
+  
 
   class Location {
 
