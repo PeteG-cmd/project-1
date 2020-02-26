@@ -15,7 +15,7 @@ body {
   align-items: center;
   flex-direction: row;
   margin: 0;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .playerInputDiv {
@@ -46,8 +46,8 @@ body {
   width: 200px;
   display: flex;
   flex-direction: column;
-  border: 1px solid white;
-  justify-content: center;
+  /* border: 1px solid white; */
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -59,14 +59,19 @@ body {
 .scorePanel {
   width: 90%;
   height: 9%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  align-items: center;
   margin: 5px;
 }
 
-p {
+#currentPlayer {
+  border: 2px dashed purple;
+}
+
+p, h1 {
   color: white;
   display: inline;
 
@@ -78,7 +83,7 @@ p {
   width: 200px;
   display: flex;
   flex-direction: column;
-  border: 1px solid white;
+  /* border: 1px solid white; */
   justify-content: space-around;
   align-items: center;
 }
@@ -106,7 +111,7 @@ p {
 .grid {
   display: flex;
   flex-direction: row;
-  border: 1px solid grey;
+  /* border: 1px solid grey; */
   width: 100vh;
   height: 100vh;
   flex-wrap: wrap;
@@ -269,10 +274,7 @@ p {
 
 .white {
   color: white;
-  /* text-overflow: initial;
-  font-size: 50px;
-  overflow: auto;
-  white-space: nowrap;  */
+
 }
 
 .life {

@@ -49,49 +49,136 @@ function main() {
   const superFoodFreezeCells = [126, 336]
   const superFoodSpeedCells = [35, 204]
 
-
+  let scores = []
+  getLocalScores()
   //Set up how the game should start
+
+
 
   const mainGameScreen = document.querySelector('.mainDiv')
   const playerNameInputScreen = document.querySelector('.playerInputDiv')
   const startGameButton = document.querySelector('.playButton')
-  
+  let playerName = document.querySelector('#playerName').value
   mainGameScreen.style.display = 'none'
-  
+
 
   startGameButton.addEventListener('click', () => {
 
-    const playerName = document.querySelector('.playerName')
+    playerName = document.querySelector('#playerName').value
+    // checkNameIsUnique(playerName)
+
+
+    const player = { name: playerName, score: score, currentPlayer: true }
+    while (scores.length > 7) {
+      scores.pop()
+    }
+    scores.push(player)
+
     playerNameInputScreen.style.display = 'none'
     mainGameScreen.style.display = 'flex'
-    const player = { name: playerName, score: score }
+    initialiseScoreBoard()
+    setTimeout(() => {
+      startGame(numOfGhostsInGame)
+    }, 3000)
 
   })
+
+  // function checkNameIsUnique(name) {
+  //   let nameIsNotUnique = true
+  //   let i = 1
+  //   while (nameIsNotUnique) {
+  //     scores.map((element) => {
+  //       if (element.name === name) {
+  //         playerName = playerName + i
+  //         i++
+  //       } else {
+  //         nameIsNotUnique = false
+  //       }
+  //     })
+  //   }
+  // }
 
 
 
   //INITIALISE SCORE BOARD
 
-  const scores = []
-  const scoreBoard = document.querySelector('.scoresDiv')
+  function initialiseScoreBoard() {
+
+    const scoreBoard = document.querySelector('.scoresDiv')
+
+    for (let i = 0; i < scores.length; i++) {
+      const scorePanel = document.createElement('div')
+      scorePanel.classList.add('scorePanel')
+      if (scores[i].currentPlayer === true) {
+        scorePanel.id = 'currentPlayer'
+      } else {
+        scorePanel.id = 'scorePanel' + i
+      }
+      const rankPosition = document.createElement('h1')
+      const playerNameSection = document.createElement('p')
+      const playerScoreSection = document.createElement('p')
+
+      rankPosition.innerHTML = i + 1
+      rankPosition.classList.add('white')
+      playerNameSection.innerHTML = scores[i].name
+      playerScoreSection.innerHTML = scores[i].score
+
+      scorePanel.appendChild(rankPosition)
+      scorePanel.appendChild(playerNameSection)
+      scorePanel.appendChild(playerScoreSection)
+
+      scoreBoard.appendChild(scorePanel)
+    }
+  }
+
+  function orderAndUpdateScoreBoard() {
+    orderScoreBoard()
+    const scoreBoard = document.querySelector('.scoresDiv')
+
+    while (scoreBoard.hasChildNodes() && scoreBoard.childElementCount !== 1) {
+      scoreBoard.removeChild(scoreBoard.lastChild)
+    }
+    initialiseScoreBoard()
+  }
 
 
 
-  for (let i = 0; i < 9; i++) {
-    const scorePanel = document.createElement('div')
-    scorePanel.classList.add('scorePanel')
-    scorePanel.id = 'scorePanel' + i
-    const playerNameSection = document.createElement('p')
-    const playerScoreSection = document.createElement('p')
+  function orderScoreBoard() {
+    scores = scores.sort((element, element2) => element2.score - element.score)
+  }
 
-    playerNameSection.innerHTML = 'Player ' + (i + 1)
-    playerScoreSection.innerHTML = i * 100
+  function updateCurrentScorePanel() {
+    document.querySelector('#currentPlayer').lastChild.innerHTML = score
+    scores.map((element) => {
+      if (element.name === playerName && element.currentPlayer === true) {
+        element.score = score
+      }
+    })
+    console.log(scores[0].score)
+    orderAndUpdateScoreBoard()
 
-    scorePanel.appendChild(playerNameSection)
-    scorePanel.appendChild(playerScoreSection)
+  }
 
-    scoreBoard.appendChild(scorePanel)
-    scores.push(scorePanel)
+  function localStoreScores() {
+    if (localStorage) {
+      orderScoreBoard()
+      scores.map((element) => {
+        if (element.currentPlayer === true) {
+          element.currentPlayer = false
+        }
+      })
+      localStorage.setItem('playerScores', JSON.stringify(scores))
+    }
+  }
+
+  function getLocalScores() {
+    if (localStorage) {
+      const playerScores = JSON.parse(localStorage.getItem('playerScores'))
+      if (playerScores) {
+        scores = playerScores
+        console.log(scores)
+      }
+    }
   }
 
   //INITIALISE INFO BOARD
@@ -186,7 +273,7 @@ function main() {
     }
   }
 
-  
+
 
   class Location {
 
@@ -255,8 +342,8 @@ function main() {
             // cells[this.currentCell].classList.remove(this.ghostClass)
             this.removeAllGhostClasses()
             this.cellJustLeft = this.currentCell
-            console.log('Ghost Moving to Smartly to Cell on Direct Path:')
-            console.log(this.cellOnPath)
+            // console.log('Ghost Moving to Smartly to Cell on Direct Path:')
+            // console.log(this.cellOnPath)
             this.currentCell = this.cellOnPath
             this.cellOnPath = ''
             cells[this.currentCell].classList.add(this.ghostClass)
@@ -275,8 +362,8 @@ function main() {
             // cells[this.currentCell].classList.remove(this.ghostClass)
             this.removeAllGhostClasses()
             this.cellJustLeft = this.currentCell
-            console.log('Ghost moving from current cell, which is:')
-            console.log(this.currentCell)
+            // console.log('Ghost moving from current cell, which is:')
+            // console.log(this.currentCell)
             this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
             this.cellOnPath = '' // THIS IS NEEDED AS IF BY CHANCE THE GHOST STOPS FOLLOWING THE PATH, I NEED TO ERASE THE PATH FOR THE GHOST TO FIND AGAIN
             cells[this.currentCell].classList.add(this.ghostClass)
@@ -353,8 +440,8 @@ function main() {
           const target = dude
 
           queue.push(new Location(this.currentCell, [this.currentCell]))
-          console.log('Current queue:')
-          console.log(queue)
+          // console.log('Current queue:')
+          // console.log(queue)
           let pathNotFound = true
 
           while (pathNotFound) {
@@ -366,15 +453,15 @@ function main() {
 
             if (checkCell.path.length > searchWidth - 1) {
               pathNotFound = false
-              console.log(checkCell.path)
-              console.log('Path not Found - Distance above 10')
+              // console.log(checkCell.path)
+              // console.log('Path not Found - Distance above 10')
               this.cellOnPath = ''
             }
 
             if (checkCell.cellNumber === target) {
               pathNotFound = false
-              console.log(checkCell.path)
-              console.log('Path Found and Target set')
+              // console.log(checkCell.path)
+              // console.log('Path Found and Target set')
               this.cellOnPath = checkCell.path[1]
             }
 
@@ -503,6 +590,7 @@ function main() {
       cells[cellNum].classList.remove('food')
       score += 10
       cells[161].innerHTML = score
+      updateCurrentScorePanel()
     }
   }
 
@@ -757,6 +845,7 @@ function main() {
             resetAfterLifeLost()
           } else {
             displayLives(lives)
+            localStoreScores()
             alert(`GAME OVER! You scored ${score}...`)
 
             goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
