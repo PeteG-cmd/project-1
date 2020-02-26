@@ -20,33 +20,41 @@ function main() {
   let intervalId3
   let returningGhostInterval
   let playerIsHunter = false
+  let ghostsAreFrozen = false
+  let playerIsSpeedy = false
   const eatenGhosts = []
   let ghostEatableTimer
+  let ghostFreezeTimer
+  let playerSpeedTimer
   let ghostReleaseTimer
-  const ghostSpeed = 0.5
-  const playerSpeed = 0.5
-  let lives = 2
-  const numOfGhostsInGame = 3
+  const ghostSpeed = 0.4
+  const playerSpeed = 0.4
+  let lives = 3
+  const numOfGhostsInGame = 4
   const secondsBetweenNewGhostGeneration = 8
-  let secondsBetweenGhostRelease = 3
-  let searchWidth = 7
+  let secondsBetweenGhostRelease = 2
+  let searchWidth = 8
   let chanceOfGhostMovingSmartly = 80 // this is as a percentage
   const timeGhostsRemainEatable = 10
+  const timeGhostsRemainFrozen = 10
+  const timePlayerIsSpeedy = 10
   const lifeCells = [177, 178, 179]
 
 
-  const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 160, 161, 162, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
+  const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
 
-  const noFoodCells = [166, 167, 168, 169, 170, 171, 172, 173, 200, 208, 209, 210, 211, 219, 246, 247, 248, 249, 250, 251, 252, 253]
+  const noFoodCells = [160, 161, 162, 166, 167, 168, 169, 170, 171, 172, 173, 200, 208, 209, 210, 211, 219, 246, 247, 248, 249, 250, 251, 252, 253]
 
-  const superFoodCells = [81, 24, 35, 98, 323, 336]
+  const superFoodEatableCells = [24, 133, 215, 323]
+  const superFoodFreezeCells = [126, 336]
+  const superFoodSpeedCells = [35, 204]
 
   //INITIALISE MAP
 
   for (let i = 0; i < gridCellCount; i++) {
     const cell = document.createElement('div')
     cell.classList.add('cell')
-    cell.innerHTML = i // REMOVE ONCE FINISHED WITH NUMBERS
+    // cell.innerHTML = i // REMOVE ONCE FINISHED WITH NUMBERS
     if (i === dude) {
       cell.classList.add('dude-right')
     }
@@ -54,11 +62,20 @@ function main() {
       cell.classList.add('food')
     }
 
-    if ((!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) && (superFoodCells.includes(i))) {
+    if (isASuperFoodEatableCell(i)) {
       cell.classList.remove('food')
-      cell.classList.add('superFood')
+      cell.classList.add('superFoodEatable')
     }
 
+    if (isASuperFoodFreezeCell(i)) {
+      cell.classList.remove('food')
+      cell.classList.add('superFoodFreeze')
+    }
+
+    if (isASuperFoodSpeedCell(i)) {
+      cell.classList.remove('food')
+      cell.classList.add('superFoodSpeed')
+    }
 
     wallCells.filter((element) => {
       if (element === i) {
@@ -73,6 +90,23 @@ function main() {
   cells[161].innerHTML = score
   cells[161].classList.add('white')
 
+  function isASuperFoodEatableCell(cell) {
+    if ((!(noFoodCells.includes(cell)) && (!(wallCells.includes(cell)))) && (superFoodEatableCells.includes(cell))) {
+      return true
+    }
+  }
+
+  function isASuperFoodFreezeCell(cell) {
+    if ((!(noFoodCells.includes(cell)) && (!(wallCells.includes(cell)))) && (superFoodFreezeCells.includes(cell))) {
+      return true
+    }
+  }
+
+  function isASuperFoodSpeedCell(cell) {
+    if ((!(noFoodCells.includes(cell)) && (!(wallCells.includes(cell)))) && (superFoodSpeedCells.includes(cell))) {
+      return true
+    }
+  }
 
   class Location {
 
@@ -120,16 +154,18 @@ function main() {
 
         // THE FOLLOWING 2 X IF ELSE HANDLE IF THE GHOST GOES THROUGH THE TRANSPORT TUNNEL
         if (this.currentCell === 219 && this.directionMoving === 2) {
-          cells[this.currentCell].classList.remove(this.ghostClass)
+          this.removeAllGhostClasses()
           this.cellJustLeft = this.currentCell
           this.currentCell -= (width - 1)
           cells[this.currentCell].classList.add(this.ghostClass)
+
         } else if (this.currentCell === 200 && this.directionMoving === 4) {
-          cells[this.currentCell].classList.remove(this.ghostClass)
+          this.removeAllGhostClasses()
           this.cellJustLeft = this.currentCell
           this.currentCell += (width - 1)
           cells[this.currentCell].classList.add(this.ghostClass)
-        } else if (this.currentCell !== 209) {
+
+        } else if (!(ghostPenCells.includes(this.currentCell))) {
 
           if (this.cellOnPath !== '' && this.willFindCellOnPath() === true && playerIsHunter === false) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN. IT ALSO STOPS THE GHOST MOVING ON THE PATH IF THE PLAYER IS THE HUNETER
 
@@ -194,14 +230,17 @@ function main() {
       cells[this.currentCell].classList.remove('animate-ghost-right')
       cells[this.currentCell].classList.remove('animate-ghost-left')
       cells[this.currentCell].classList.remove('animate-ghost-up')
+      cells[this.currentCell].classList.remove('eatableBlue')
+      cells[this.currentCell].classList.remove('freezeBlue')
+
     }
 
 
     findDirectionMoving(currentCell, newCell) {
-      if (newCell - currentCell === 1) {
+      if (newCell - currentCell === 1 || newCell - currentCell === (width - 38)) { // The additional 'or' sets the direction as moving through the tunnel
         return 2
       }
-      if (newCell - currentCell === -1) {
+      if (newCell - currentCell === -1 || newCell - currentCell === (width - 1)) {
         return 4
       }
       if (newCell - currentCell === -(width)) {
@@ -387,22 +426,26 @@ function main() {
     }
   }
 
+  function ghostPenCellsFull() {
+    ghostPenOccupied.length >= 4
+  }
 
 
   function removeSuperFoodActivateChase(cellNum) {
 
-    if (cells[cellNum].classList.contains('superFood')) {
+    if (cells[cellNum].classList.contains('superFoodEatable')) {
       if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
         clearTimeout(ghostEatableTimer)
       }
-      cells[cellNum].classList.remove('superFood')
+      cells[cellNum].classList.remove('superFoodEatable')
 
       clearTimeout(ghostReleaseTimer)
-      ghostReleaseCountdownActive = false //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
+      ghostReleaseCountdownActive = true //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
 
-      //THESE 2 BELOW LINES THAT ARE COMMENTED OUT DID INCREASE THE PLAYER SPEED, BUT THIS HAS BEEN DISABLED FOR SMOOTH MOVEMENT FOR THE MOMENT
-      // clearInterval(intervalId2)
-      // startPlayerInterval(playerSpeed / 1.4)
+      if ((ghostPenCellsFull()) && ghostsAreFrozen === false) {
+        ghostReleaseCountdownActive = false
+      }
+
 
       score += 50
       cells[161].innerHTML = score
@@ -421,19 +464,16 @@ function main() {
           cells[element.currentCell].classList.remove('eatableBlue')
           element.ghostClass = element.name
           cells[element.currentCell].classList.add(element.name)
+          ghostReleaseCountdownActive = false
 
         })
-        // AGAIN, BELOW 2 LINES DISABLED FOR TESTING OF SMOOTH MOVEMENT POURPOSES
-        // clearInterval(intervalId2)
-        // startPlayerInterval(playerSpeed)
 
       }, timeGhostsRemainEatable * 1000)
-
     }
     // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
     ghosts.map((element) => {
 
-      if (((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft)) && element.ghostClass === 'eatableBlue') {
+      if ((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft) && element.ghostClass === 'eatableBlue') {
 
 
         eatenGhosts.push(element.name)
@@ -537,22 +577,98 @@ function main() {
 
   }
 
+  function removeSuperFoodActivateFreeze(cellNum) {
+    if (cells[cellNum].classList.contains('superFoodFreeze')) {
+      if (((ghosts.some((element) => element.ghostClass === 'freezeBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
+        clearTimeout(ghostFreezeTimer)
+      }
+      cells[cellNum].classList.remove('superFoodFreeze')
+
+      clearTimeout(ghostReleaseTimer)
+      ghostReleaseCountdownActive = true
+
+      if (ghostPenCellsFull() && playerIsHunter === false) {
+        ghostReleaseCountdownActive = false
+      }
+
+      score += 50
+      cells[161].innerHTML = score
+      ghostsAreFrozen = true
+
+      ghosts.map((element) => {
+        if (!(ghostPenOccupied.includes(element.currentCell))) {
+          cells[element.currentCell].classList.add('freezeBlue')
+          
+        }
+      })
+
+
+      ghostFreezeTimer = setTimeout(() => {
+        ghostsAreFrozen = false
+        ghostReleaseCountdownActive = false
+        ghosts.map((element) => {
+          if (!(ghostPenOccupied.includes(element.currentCell))) {
+            cells[element.currentCell].classList.remove('freezeBlue')
+            
+          }
+        })
+
+      }, timeGhostsRemainFrozen * 1000)
+    }
+  }
+
+
+  function removeSuperFoodActivateSpeed(cellNum) {
+    if (cells[cellNum].classList.contains('superFoodSpeed')) {
+
+      cells[cellNum].classList.remove('superFoodSpeed')
+
+
+      clearInterval(intervalId2)
+      startPlayerInterval(playerSpeed / 2)
+      playerIsSpeedy = true
+
+      score += 50
+      cells[161].innerHTML = score
+
+      playerSpeedTimer = setTimeout(() => {
+        playerIsSpeedy = false
+        clearInterval(intervalId2)
+        startPlayerInterval(playerSpeed)
+
+      }, timePlayerIsSpeedy * 1000)
+    }
+  }
+
   function doesCellContainDude(cellToCheck) {
-    if ((cells[cellToCheck].classList.contains('dude-right')) || (cells[cellToCheck].classList.contains('dude-up')) || (cells[cellToCheck].classList.contains('dude-down')) || (cells[cellToCheck].classList.contains('dude-left'))) {
+    if ((cells[cellToCheck].classList.contains('dude-right')) || (cells[cellToCheck].classList.contains('dude-up')) || (cells[cellToCheck].classList.contains('dude-down')) || (cells[cellToCheck].classList.contains('dude-left')) || (cells[cellToCheck].classList.contains('dude-right-fast')) || (cells[cellToCheck].classList.contains('dude-up-fast')) || (cells[cellToCheck].classList.contains('dude-down-fast')) || (cells[cellToCheck].classList.contains('dude-left-fast'))) {
       return true
     }
+  }
+
+  function clearSuperFoodTimeOuts() {
+    clearTimeout(ghostFreezeTimer)
+    ghostsAreFrozen = false
+    clearTimeout(playerSpeedTimer)
+    playerIsSpeedy = false
+    clearTimeout(ghostEatableTimer)
+    playerIsHunter = false
+    // clearTimeout(ghostReleaseTimer)
+
   }
 
   function checkForGameOver() {
     if (playerIsHunter === false)
       ghosts.map((element) => {
-        if (cells[dude].classList.contains(element.name) || doesCellContainDude(element.cellJustLeft)) {
+        if (cells[dude].classList.contains(element.name) || (doesCellContainDude(element.cellJustLeft) && ghostsAreFrozen === false)) {
 
           // cells[element.cellJustLeft].doesCellContainDude(element.cellJustLeft)) {
+          clearSuperFoodTimeOuts()
           clearInterval(intervalId3)
           clearInterval(intervalId2)
           clearInterval(intervalId)
           clearInterval(returningGhostInterval)
+
           lives--
           console.log(lives)
 
@@ -569,14 +685,21 @@ function main() {
       })
   }
 
+  function superFoodRemainingInGame() {
+    cells.some((cell) => {
+      if (cell.classList.contains('superFoodEatable')) {
+        return true
+      }
+    })
+  }
+
   function checkForGameWon() {
     const foodRemaining = cells.some((cell) => {
       return cell.classList.contains('food')
     })
-    const superFoodRemaining = cells.some((cell) => {
-      return cell.classList.contains('superFood')
-    })
-    if ((!(foodRemaining)) && (!(superFoodRemaining))) {
+
+    if ((!(foodRemaining)) && (!(superFoodRemainingInGame()))) {
+      clearSuperFoodTimeOuts()
       clearInterval(intervalId2)
       clearInterval(intervalId)
       clearInterval(intervalId3)
@@ -590,6 +713,7 @@ function main() {
     removeGhostsFromGame()
     movePlayerToStartingLocation()
     displayLives(lives)
+    playerDirection =
 
     setTimeout(() => {
       startGame(numOfGhostsInGame)
@@ -630,6 +754,7 @@ function main() {
       movePlayerToStartingLocation()
       displayLives(lives)
       resetGameBoard()
+      playerDirection = 
 
 
       setTimeout(() => {
@@ -654,9 +779,19 @@ function main() {
         cells[i].classList.add('food')
       }
 
-      if ((!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) && (superFoodCells.includes(i))) {
+      if (isASuperFoodEatableCell(i)) {
         cells[i].classList.remove('food')
-        cells[i].classList.add('superFood')
+        cells[i].classList.add('superFoodEatable')
+      }
+
+      if (isASuperFoodSpeedCell(i)) {
+        cells[i].classList.remove('food')
+        cells[i].classList.add('superFoodSpeed')
+      }
+
+      if (isASuperFoodFreezeCell(i)) {
+        cells[i].classList.remove('food')
+        cells[i].classList.add('superFoodFreeze')
       }
     }
   }
@@ -707,7 +842,13 @@ function main() {
     removeAllPlayerClasses()
     dude -= width
     cells[dude].classList.add('dude-up')
-    cells[dude].classList.add('animate-dude-up')
+    if (playerIsSpeedy) {
+      cells[dude].classList.remove('dude-up')
+      cells[dude].classList.add('dude-up-fast')
+      cells[dude].classList.add('animate-dude-up-fast')
+    } else {
+      cells[dude].classList.add('animate-dude-up')
+    }
   }
 
   function movePlayerRight() {
@@ -722,7 +863,14 @@ function main() {
     removeAllPlayerClasses()
     dude += 1
     cells[dude].classList.add('dude-right')
-    cells[dude].classList.add('animate-dude-right')
+    if (playerIsSpeedy) {
+      cells[dude].classList.remove('dude-right')
+      cells[dude].classList.add('dude-right-fast')
+      cells[dude].classList.add('animate-dude-right-fast')
+    } else {
+      cells[dude].classList.add('animate-dude-right')
+    }
+
   }
 
   function movePlayerDown() {
@@ -732,7 +880,13 @@ function main() {
     removeAllPlayerClasses()
     dude += width
     cells[dude].classList.add('dude-down')
-    cells[dude].classList.add('animate-dude-down')
+    if (playerIsSpeedy) {
+      cells[dude].classList.remove('dude-down')
+      cells[dude].classList.add('dude-down-fast')
+      cells[dude].classList.add('animate-dude-down-fast')
+    } else {
+      cells[dude].classList.add('animate-dude-down')
+    }
   }
 
   function movePlayerLeft() {
@@ -746,8 +900,15 @@ function main() {
     removeAllPlayerClasses()
     dude -= 1
     cells[dude].classList.add('dude-left')
-    cells[dude].classList.add('animate-dude-left')
+    if (playerIsSpeedy) {
+      cells[dude].classList.remove('dude-left')
+      cells[dude].classList.add('dude-left-fast')
+      cells[dude].classList.add('animate-dude-left-fast')
+    } else {
+      cells[dude].classList.add('animate-dude-left')
+    }
   }
+
 
 
   function removeAllPlayerClasses() {
@@ -755,17 +916,25 @@ function main() {
     cells[dude].classList.remove('dude-up')
     cells[dude].classList.remove('dude-down')
     cells[dude].classList.remove('dude-left')
+    cells[dude].classList.remove('dude-right-fast')
+    cells[dude].classList.remove('dude-up-fast')
+    cells[dude].classList.remove('dude-down-fast')
+    cells[dude].classList.remove('dude-left-fast')
     cells[dude].classList.remove('animate-dude-up')
     cells[dude].classList.remove('animate-dude-down')
     cells[dude].classList.remove('animate-dude-right')
     cells[dude].classList.remove('animate-dude-left')
+    cells[dude].classList.remove('animate-dude-up-fast')
+    cells[dude].classList.remove('animate-dude-down-fast')
+    cells[dude].classList.remove('animate-dude-right-fast')
+    cells[dude].classList.remove('animate-dude-left-fast')
 
   }
 
 
 
 
-  startGame(numOfGhostsInGame)
+  //startGame(numOfGhostsInGame)
 
   function startGame(numberOfGhosts) {
 
@@ -788,10 +957,12 @@ function main() {
     intervalId = setInterval(() => {
 
       // if ((ghosts[0].ghostClass === ghosts[0].name)) { // THIS MAKES SURE WHILE GHOSTS ARE EATABLE THEY CAN NOT BE RELEASED FROM PEN. THIS MAY NEED TO BE CHANGED
-      if (!((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) {
+      if ((!((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) || ghostsAreFrozen === false) {
         releaseGhosts()
       }
-      moveGhosts()
+      if (ghostsAreFrozen === false) {
+        moveGhosts()
+      }
 
     }, ghostSpeed * 1000)
 
@@ -806,6 +977,8 @@ function main() {
       checkForGameWon()
       removeFoodIncrementScore(dude)
       removeSuperFoodActivateChase(dude)
+      removeSuperFoodActivateFreeze(dude)
+      removeSuperFoodActivateSpeed(dude)
 
     }, 10)
 

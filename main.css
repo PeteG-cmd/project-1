@@ -3,7 +3,8 @@
 }
 
 body {
-  height: 100vh;
+  height: 96vh;
+  background-color: black;
 }
 
 .mainDiv {
@@ -11,90 +12,153 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
   margin: 0;
+  border: 1px solid red;
 }
+
+.scoresDiv {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  flex-grow: 1;
+}
+
+h1 {color: white;}
 
 .grid {
   display: flex;
   flex-direction: row;
   border: 1px solid grey;
-  width: 700px;
-  height: 700px;
+  width: 100vh;
+  height: 100vh;
   flex-wrap: wrap;
+  background-color: black;
+  
+}
+
+.infoDiv {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  flex-grow: 1;
 }
 
 .cell {
   width: 5%;
   height: 5%;
-  border: 1px solid red;
+  background-color: black;
+  color: aliceblue;
+  /* border: 1px solid red; */
 }
 
 .wall {
   background-color: black;
+  border-radius: 5px;
+  outline: 3px double purple;
+  outline-offset: -6px;
+
 
 }
 
 .food {
-  /* background-image: url(images/OJS.png); */
-  background-image: url(images/food-dot-black.png);
-  background-size: 15px;
+  background-image: url(images/OJS1.png);
+  background-size: 10px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.superFood {
-  /* background-image: url(images/bolt-from-the-blue.png); */
-  background-image: url(images/food-dot.png);
-  background-size: 20px;
+.superFoodEatable {
+  background-image: url(images/bolt-from-the-blue-1.png);
+  background-size: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.superFoodFreeze {
+  background-image: url(images/wonder-green.png);
+  background-size: 25px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.superFoodSpeed {
+  background-image: url(images/berry-set-go.png);
+  background-size: 25px;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .dude-right {
-  background-image: url(images/pac-man.png);
+  background-image: url(images/dude-right.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .dude-left {
-  background-image: url(images/pac-man-left.png);
+  background-image: url(images/dude-left.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .dude-up {
-  background-image: url(images/pac-man-up.png);
+  background-image: url(images/dude-up.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .dude-down {
-  background-image: url(images/pac-man-down.png);
+  background-image: url(images/dude-down.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-right-fast {
+  background-image: url(images/dude-right-speedy.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-left-fast {
+  background-image: url(images/dude-left-speedy.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-up-fast {
+  background-image: url(images/dude-up-speedy.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.dude-down-fast {
+  background-image: url(images/dude-down-speedy.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .ghost1 {
-  background-image: url(images/ghost-1.png);
+  background-image: url(images/cloud-red.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .ghost2 {
-  background-image: url(images/ghost-2.png);
+  background-image: url(images/cloud-purple.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .ghost3 {
-  background-image: url(images/ghost-1.png);
+  background-image: url(images/cloud-orange.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .ghost4 {
-  background-image: url(images/ghost-2.png);
+  background-image: url(images/cloud-blue.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -124,26 +188,31 @@ body {
 }
 
 .eatableBlue {
-  background-image: url(images/ghost-blue-big.png);
+  background-image: url(images/cloud-eatable.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
+.freezeBlue {
+  background-color: cornflowerblue;
+}
+
 .white {
   color: white;
-  /* font-size: 40px;
+  /* text-overflow: initial;
+  font-size: 50px;
   overflow: auto;
-  white-space: nowrap; */
+  white-space: nowrap;  */
 }
 
 .life {
-  background-image: url(images/life-pixelated.png);
+  background-image: url(images/heartArtboard\ 1.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .returningGhost {
-  background-image: url(images/ghost-blue.png);
+  background-image: url(images/cloud-dead.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -153,7 +222,7 @@ body {
 /* THIS HANDLES MOVING THE PALYER SMOOTHLY */
 
 .animate-dude-right {
-  animation: move-dude-right 0.5s linear;
+  animation: move-dude-right 0.4s linear;
 }
 
 @keyframes move-dude-right {
@@ -166,7 +235,7 @@ body {
 }
 
 .animate-dude-left {
-  animation: move-dude-left 0.5s linear;
+  animation: move-dude-left 0.4s linear;
 }
 
 @keyframes move-dude-left {
@@ -179,7 +248,7 @@ body {
 }
 
 .animate-dude-up {
-  animation: move-dude-up 0.5s linear;
+  animation: move-dude-up 0.4s linear;
 }
 
 @keyframes move-dude-up {
@@ -192,7 +261,7 @@ body {
 }
 
 .animate-dude-down {
-  animation: move-dude-down 0.5s linear;
+  animation: move-dude-down 0.4s linear;
 }
 
 @keyframes move-dude-down {
@@ -204,11 +273,66 @@ body {
   }
 }
 
+/* THIS HANDLES MOVING THE PLAYER AT DOUBLE SPEED */
+
+.animate-dude-right-fast {
+  animation: move-dude-right-fast 0.2s linear;
+}
+
+@keyframes move-dude-right-fast {
+  0% {
+    transform: translate(-100%, 0);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-dude-left-fast {
+  animation: move-dude-left-fast 0.2s linear;
+}
+
+@keyframes move-dude-left-fast {
+  0% {
+    transform: translate(100%, 0);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-dude-up-fast {
+  animation: move-dude-up-fast 0.2s linear;
+}
+
+@keyframes move-dude-up-fast {
+  0% {
+    transform: translate(0, 100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.animate-dude-down-fast {
+  animation: move-dude-down-fast 0.2s linear;
+}
+
+@keyframes move-dude-down-fast {
+  0% {
+    transform: translate(0, -100%);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+
 
 /* THIS HANDLES MOVING THE GHOSTS SMOOTHLY */
 
 .animate-ghost-right {
-  animation: move-ghost-right 0.5s linear;
+  animation: move-ghost-right 0.4s linear;
 }
 
 @keyframes move-ghost-right {
@@ -221,7 +345,7 @@ body {
 }
 
 .animate-ghost-left {
-  animation: move-ghost-left 0.5s linear;
+  animation: move-ghost-left 0.4s linear;
 }
 
 @keyframes move-ghost-left {
@@ -234,7 +358,7 @@ body {
 }
 
 .animate-ghost-up {
-  animation: move-ghost-up 0.5s linear;
+  animation: move-ghost-up 0.4s linear;
 }
 
 @keyframes move-ghost-up {
@@ -247,7 +371,7 @@ body {
 }
 
 .animate-ghost-down {
-  animation: move-ghost-down 0.5s linear;
+  animation: move-ghost-down 0.4s linear;
 }
 
 @keyframes move-ghost-down {
