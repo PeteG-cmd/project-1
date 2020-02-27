@@ -62,8 +62,8 @@ function main() {
     const numOfGhostsInGame = 4
     const secondsBetweenNewGhostGeneration = 8
     let secondsBetweenGhostRelease = 2.5
-    let searchWidth = 8
-    let chanceOfGhostMovingSmartly = 76 // this is as a percentage
+    let searchWidth = 7
+    let chanceOfGhostMovingSmartly = 75 // this is as a percentage
     const timeGhostsRemainEatable = 8
     const timeGhostsRemainFrozen = 6
     const timePlayerIsSpeedy = 4
@@ -979,19 +979,13 @@ function main() {
               // cells[element.cellJustLeft].doesCellContainDude(element.cellJustLeft)) {
 
               lives--
-              console.log(lives)
+              cells[dude].classList.remove('apple')
 
               if (livesDoRemain()) {
                 resetAfterLifeLost()
               } else {
                 displayLives(lives)
-                // removeGhostsFromGame()
                 movePlayerToStartingLocation()
-                // localStoreScores()
-                // alert(`GAME OVER! You scored ${score}...`)
-
-                // goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
-
                 handleGameInterval('gameOver')
               }
             }, 3000)
