@@ -200,8 +200,17 @@ h2 {
   border-radius: 5px;
   outline: 3px double purple;
   outline-offset: -6px;
+}
 
+.apple {
+  background-image: url(images/apple.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 
+.cellGate {
+  outline: 2px double purple;
+  outline-offset: -10px;
 }
 
 .food {
