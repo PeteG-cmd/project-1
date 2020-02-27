@@ -6,6 +6,9 @@ body {
   height: 96vh;
   background-color: black;
   padding: 15px 15px 15px 15px;
+  /* display: flex; */
+  /* justify-content: space-around; */
+  /* align-items: center; */
 }
 
 .mainDiv {
@@ -19,7 +22,7 @@ body {
 }
 
 .playerInputDiv {
-  height: 70vh;
+  height: 80vh;
   width: 90vw;
   color: white;
   display: flex;
@@ -30,13 +33,22 @@ body {
   margin: auto;
 }
 
+input {
+  width: 200px;
+  height: 50px;
+  border-radius: 5px;
+  font-size: 150%;
+}
+
+
+
 .playButton {
   height: 10%;
   width: 40%;
   border: 1px solid white;
   border-radius: 8px;
   color: white;
-  background-color: black;
+  background-color:black;
   font-size: 40px;
 }
 
@@ -48,12 +60,12 @@ body {
   flex-direction: column;
   /* border: 1px solid white; */
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .scoresDiv img {
   width: 100%;
-  /* margin: -10px; */
+  margin: 0 0 -50px 0;
 }
 
 .scorePanel {
@@ -74,17 +86,19 @@ body {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  border: 1px solid white;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
 
 .scoresDiv2 .scorePanel {
-  width: 20%;
+  width: 22%;
+  height: 40%;
+  border: 1px solid purple
 }
 
 .playerInputDiv img {
-  height: 20%;
+  height: 35%;
+  margin: 0 0 -80px 0;
 }
 
 #currentPlayer {
