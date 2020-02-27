@@ -62,10 +62,10 @@ function main() {
     const numOfGhostsInGame = 4
     const secondsBetweenNewGhostGeneration = 8
     let secondsBetweenGhostRelease = 2
-    let searchWidth = 8
-    let chanceOfGhostMovingSmartly = 80 // this is as a percentage
-    const timeGhostsRemainEatable = 10
-    const timeGhostsRemainFrozen = 10
+    let searchWidth = 7
+    let chanceOfGhostMovingSmartly = 75 // this is as a percentage
+    const timeGhostsRemainEatable = 8
+    const timeGhostsRemainFrozen = 6
     const timePlayerIsSpeedy = 5
     const lifeCells = [177, 178, 179]
 
@@ -112,9 +112,11 @@ function main() {
       playerNameInputScreen.style.display = 'none'
       mainGameScreen.style.display = 'flex'
       initialiseScoreBoard()
-      setTimeout(() => {
-        startGame(numOfGhostsInGame)
-      }, 3000)
+      // setTimeout(() => {
+      //   startGame(numOfGhostsInGame)
+      // }, 3000)
+
+      handleGameInterval('newLevel')
 
     })
 
@@ -852,12 +854,12 @@ function main() {
       }
     }
 
-    
+
 
     function handleDomDisplayGhostFreezeTimer() {
       const display1 = document.querySelector('#infoPanel1').lastChild
       clearInterval(ghostFreezeDisplayInterval)
-      let i = 10.00
+      let i = timeGhostsRemainFrozen
       const superFoodDescription = 'wonder green'
 
       ghostFreezeDisplayInterval = setInterval(() => {
@@ -871,12 +873,12 @@ function main() {
 
     }
 
-    
+
 
     function handleDomDisplayPlayerSpeedTimer() {
       const display = document.querySelector('#infoPanel2').lastChild
       clearInterval(playerSpeedDisplayInterval)
-      let i = 5.00
+      let i = timePlayerIsSpeedy
       const superFoodDescription = 'berry.. set... GO'
 
       playerSpeedDisplayInterval = setInterval(() => {
@@ -890,12 +892,12 @@ function main() {
 
     }
 
-    
+
 
     function handleDomDisplayGhostEatabletimer() {
       const display = document.querySelector('#infoPanel0').lastChild
       clearInterval(ghostEatableDisplayInterval)
-      let i = 10.00
+      let i = timeGhostsRemainEatable
       const superFoodDescription = 'bolt from the blue'
 
       ghostEatableDisplayInterval = setInterval(() => {
@@ -919,7 +921,7 @@ function main() {
 
 
         clearInterval(intervalId2)
-        startPlayerInterval(playerSpeed / 2)
+        startPlayerInterval(playerSpeed / 1.5)
         playerIsSpeedy = true
 
         score += 50
@@ -971,11 +973,14 @@ function main() {
               resetAfterLifeLost()
             } else {
               displayLives(lives)
+              removeGhostsFromGame()
+              movePlayerToStartingLocation()
               // localStoreScores()
               // alert(`GAME OVER! You scored ${score}...`)
 
-              goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
+              // goToScoreBoard() //// THIS NEEDS TO BE IMPLEMENTED - ITS ONLY AN ALERT AT THE MOMENT
 
+              handleGameInterval('gameOver')
             }
           }
         })
@@ -1010,12 +1015,7 @@ function main() {
       movePlayerToStartingLocation()
       displayLives(lives)
       playerDirection =
-
-        setTimeout(() => {
-          startGame(numOfGhostsInGame)
-        }, 3000)
-
-
+        handleGameInterval('lifeLost')
     }
 
     function movePlayerToStartingLocation() {
@@ -1040,10 +1040,10 @@ function main() {
     }
 
     function beginNextLevel() {
-      if (level === 1 || level === 2) {
+      if (level === 1 || level === 2 || level === 3 || level === 4) {
         level++
-        secondsBetweenGhostRelease -= 1
-        chanceOfGhostMovingSmartly += 5
+        secondsBetweenGhostRelease -= 0.5
+        chanceOfGhostMovingSmartly += 4
         searchWidth += 1
 
         removeGhostsFromGame()
@@ -1053,12 +1053,15 @@ function main() {
         playerDirection =
 
 
-          setTimeout(() => {
-            startGame(numOfGhostsInGame)
-          }, 3000)
+          // setTimeout(() => {
+          //   startGame(numOfGhostsInGame)
+          // }, 3000)
+
+          handleGameInterval('newLevel')
 
       } else {
-        goToScoreBoard()
+        handleGameInterval('gameWon')
+        // goToScoreBoard()
 
       }
     }
@@ -1066,6 +1069,7 @@ function main() {
     function goToScoreBoard() {
       localStoreScores()
       mainGameScreen.style.display = 'none'
+      gameCountdownScreen.style.display = 'none'
       playerNameInputScreen.style.display = 'flex'
       // getLocalScores()
       updateCurrentScorePanel()
@@ -1233,8 +1237,54 @@ function main() {
 
     }
 
+    // const mainGameScreen = document.querySelector('.mainDiv')
+    // const playerNameInputScreen = document.querySelector('.playerInputDiv')
+    const gameCountdownScreen = document.querySelector('.gameCountdownDiv')
+    const countDownTextDisplay = document.querySelector('.countDownTextDisplay')
 
+    function handleGameInterval(interval) {
 
+      // const mainGameScreen = document.querySelector('.mainDiv')
+      // const playerNameInputScreen = document.querySelector('.playerInputDiv')
+      // const gameCountdownScreen = document.querySelector('.gameCountdownDiv')
+      // const countDownTextDisplay = document.querySelector('.countDownTextDisplay')
+      playerNameInputScreen.style.display = 'none'
+      mainGameScreen.style.display = 'none'
+      gameCountdownScreen.style.display = 'flex'
+
+      let i = 6
+
+      const gameStartingInterval = setInterval(() => {
+        i--
+
+        if (interval === 'gameOver') {
+          countDownTextDisplay.innerHTML = 'GAME OVER. <br> YOU SCORED: ' + score
+        } else if (interval === 'gameWon') {
+          countDownTextDisplay.innerHTML = 'GAME COMPLETE! <br> YOU SCORED: ' + score
+        } else if (i > 3) {
+
+          if (interval === 'newLevel') {
+            countDownTextDisplay.innerHTML = 'LEVEL ' + level + '. GET READY...'
+          } else if (interval === 'lifeLost') {
+            countDownTextDisplay.innerHTML = lives + ' LIVES REMAINING. GET READY...'
+          }
+        } else {
+          countDownTextDisplay.innerHTML = i.toString()
+        }
+
+        if ((i === 0) && (lives > 0)) {
+          gameCountdownScreen.style.display = 'none'
+          mainGameScreen.style.display = 'flex'
+          startGame(numOfGhostsInGame)
+          countDownTextDisplay.innerHTML = ''
+          clearInterval(gameStartingInterval)
+        } else if (i === 0) {
+          goToScoreBoard()
+          clearInterval(gameStartingInterval)
+        }
+
+      }, 1000)
+    }
 
     //startGame(numOfGhostsInGame)
 

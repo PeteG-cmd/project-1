@@ -39,6 +39,14 @@ body {
   padding: 35px;
 }
 
+.gameCountdownDiv {
+  display: none;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
 input {
   width: 200px;
   height: 50px;
@@ -124,6 +132,13 @@ h1 {
   font-family: 'Press Start 2P';
   font-size: 20px;
 }
+
+h2 {
+  color: white;
+  font-family: 'Press Start 2P';
+  font-size: 30px;
+}
+
 
 .infoPanel :last-child {
   font-size: 15px;
@@ -399,7 +414,7 @@ h1 {
 /* THIS HANDLES MOVING THE PLAYER AT DOUBLE SPEED */
 
 .animate-dude-right-fast {
-  animation: move-dude-right-fast 0.2s linear;
+  animation: move-dude-right-fast 0.266667s linear;
 }
 
 @keyframes move-dude-right-fast {
@@ -412,7 +427,7 @@ h1 {
 }
 
 .animate-dude-left-fast {
-  animation: move-dude-left-fast 0.2s linear;
+  animation: move-dude-left-fast 0.266667s linear;
 }
 
 @keyframes move-dude-left-fast {
@@ -425,7 +440,7 @@ h1 {
 }
 
 .animate-dude-up-fast {
-  animation: move-dude-up-fast 0.2s linear;
+  animation: move-dude-up-fast 0.266667s linear;
 }
 
 @keyframes move-dude-up-fast {
@@ -438,7 +453,7 @@ h1 {
 }
 
 .animate-dude-down-fast {
-  animation: move-dude-down-fast 0.2s linear;
+  animation: move-dude-down-fast 0.266667s linear;
 }
 
 @keyframes move-dude-down-fast {
