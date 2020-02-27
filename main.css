@@ -223,6 +223,11 @@ h2 {
   outline-offset: -10px;
 }
 
+.cellGateLocked {
+  outline: 2px double red;
+  outline-offset: -10px;
+}
+
 .food {
   background-image: url(images/OJS1.png);
   background-size: 10px;

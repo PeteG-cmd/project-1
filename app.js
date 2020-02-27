@@ -682,9 +682,11 @@ function main() {
 
         clearTimeout(ghostReleaseTimer)
         ghostReleaseCountdownActive = true //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
+        // ghostPenCellsLocked()
 
         if ((ghostPenCellsFull()) && ghostsAreFrozen === false) {
           ghostReleaseCountdownActive = false
+          // ghostPenCellsUnLocked()
         }
 
         score += 50
@@ -705,6 +707,7 @@ function main() {
             element.ghostClass = element.name
             cells[element.currentCell].classList.add(element.name)
             ghostReleaseCountdownActive = false
+            // ghostPenCellsUnLocked()
 
           })
 
@@ -815,12 +818,19 @@ function main() {
 
     }
 
-    function ghostPenCellsLocked() {
-      penGateCells.map((element) => {
-        element.style.outline.color = 'red'
+    // function ghostPenCellsLocked() {
+    //   penGateCells.map((element) => {
+    //     element.classList.remove('cellGate')
+    //     element.classList.add('cellGateLocked')
+    //   })
+    // }
 
-      })
-    }
+    // function ghostPenCellsUnLocked() {
+    //   penGateCells.map((element) => {
+    //     element.classList.remove('cellGateLocked')
+    //     element.classList.add('cellGate')
+    //   })
+    // }
 
     function removeSuperFoodActivateFreeze(cellNum) {
       if (cells[cellNum].classList.contains('superFoodFreeze')) {
@@ -837,6 +847,7 @@ function main() {
 
         if (ghostPenCellsFull() && playerIsHunter === false) {
           ghostReleaseCountdownActive = false
+          // ghostPenCellsUnLocked()
         }
 
         score += 50
@@ -856,6 +867,7 @@ function main() {
         ghostFreezeTimer = setTimeout(() => {
           ghostsAreFrozen = false
           ghostReleaseCountdownActive = false
+          // ghostPenCellsUnLocked()
           ghosts.map((element) => {
             if (!(ghostPenOccupied.includes(element.currentCell))) {
               cells[element.currentCell].classList.remove('freezeBlue')
@@ -990,6 +1002,7 @@ function main() {
               lives--
               cells[dude].classList.remove('apple')
               ghostReleaseCountdownActive = false
+              // ghostPenCellsUnLocked()
 
               if (livesDoRemain()) {
                 resetAfterLifeLost()
@@ -1018,6 +1031,7 @@ function main() {
       })
 
       if ((!(foodRemaining)) && (!(superFoodRemainingInGame()))) {
+        ghostReleaseCountdownActive = false
         clearSuperFoodTimeOuts()
         clearInterval(intervalId2)
         clearInterval(intervalId)
