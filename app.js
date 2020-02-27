@@ -1258,7 +1258,6 @@ function main() {
 
       intervalId = setInterval(() => {
 
-        // if ((ghosts[0].ghostClass === ghosts[0].name)) { // THIS MAKES SURE WHILE GHOSTS ARE EATABLE THEY CAN NOT BE RELEASED FROM PEN. THIS MAY NEED TO BE CHANGED
         if (!((ghosts.some((element) => element.ghostClass === 'eatableBlue'))) && ghostsAreFrozen === false) {
           releaseGhosts()
         }

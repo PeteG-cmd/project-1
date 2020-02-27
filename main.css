@@ -90,9 +90,7 @@ input {
 }
 
 .scoresDiv2 {
-  /* height: 100vh; */
-  width: 90%;
-  /* height: 30px; */
+  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -103,7 +101,7 @@ input {
 .scoresDiv2 .scorePanel {
   width: 18%;
   height: 40%;
-  margin: 20px;
+  margin: 15px;
 }
 
 .playerInputDiv img {
