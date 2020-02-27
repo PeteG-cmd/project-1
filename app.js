@@ -244,7 +244,7 @@ function main() {
     const infoBoard = document.querySelector('.infoDiv')
     const superFoods = ['bolt from the blue', 'wonder green', 'berry.. set... GO!']
     const superFoodColor = ['rgb(47, 188, 204)', 'rgb(39, 184, 130)', 'rgb(219, 83, 59)']
-    const superFoodPower = ['HUNT', 'FREEZE', 'SPEED']
+    const superFoodPower = ['EAT', 'FREEZE', 'SPEED']
     const superFoodGraphics = ['images/bolt-from-the-blue-1.png', 'images/wonder-green.png', 'images/berry-set-go.png']
 
     for (let i = 0; i < superFoods.length; i++) {
@@ -1068,9 +1068,9 @@ function main() {
 
     function goToScoreBoard() {
       localStoreScores()
-      mainGameScreen.style.display = 'none'
-      gameCountdownScreen.style.display = 'none'
-      playerNameInputScreen.style.display = 'flex'
+      // mainGameScreen.style.display = 'none'
+      // gameCountdownScreen.style.display = 'none'
+      // playerNameInputScreen.style.display = 'flex'
       // getLocalScores()
       updateCurrentScorePanel()
       location.reload()
@@ -1258,19 +1258,22 @@ function main() {
         i--
 
         if (interval === 'gameOver') {
-          countDownTextDisplay.innerHTML = 'GAME OVER. <br> YOU SCORED: ' + score
+          countDownTextDisplay.innerHTML = 'GAME OVER. <br><br> YOU SCORED: ' + score
         } else if (interval === 'gameWon') {
-          countDownTextDisplay.innerHTML = 'GAME COMPLETE! <br> YOU SCORED: ' + score
+          countDownTextDisplay.innerHTML = 'GAME COMPLETE! <br><br>YOU SCORED: ' + score
         } else if (i > 3) {
 
           if (interval === 'newLevel') {
             countDownTextDisplay.innerHTML = 'LEVEL ' + level + '. GET READY...'
+          } else if (interval === 'lifeLost' && lives === 1) {
+            countDownTextDisplay.innerHTML = lives + ' LIFE REMAINING. GET READY...'
           } else if (interval === 'lifeLost') {
             countDownTextDisplay.innerHTML = lives + ' LIVES REMAINING. GET READY...'
           }
         } else {
           countDownTextDisplay.innerHTML = i.toString()
         }
+
 
         if ((i === 0) && (lives > 0)) {
           gameCountdownScreen.style.display = 'none'
