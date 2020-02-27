@@ -2,35 +2,43 @@
   box-sizing: border-box;
 }
 
+html {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 body {
   height: 96vh;
+  width: 96vw;
   background-color: black;
   padding: 15px 15px 15px 15px;
-  /* display: flex; */
-  /* justify-content: space-around; */
-  /* align-items: center; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .mainDiv {
-  height: 100vh;
+  height: 90%;
   display: flex;
   justify-content: space-around;
-  align-items: center;
+  /* align-items: stretch; */
   flex-direction: row;
-  margin: 0;
+  /* margin: 0; */
   /* border: 1px solid red; */
 }
 
 .playerInputDiv {
-  height: 80vh;
-  width: 90vw;
+  height: 90%;
+  width: 90%;
   color: white;
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-direction: column;
-  border: 1px solid red;
+  border: 1px solid purple;
   margin: auto;
+  padding: 35px;
 }
 
 input {
@@ -49,34 +57,36 @@ input {
   border-radius: 8px;
   color: white;
   background-color:black;
-  font-size: 40px;
+  font-size: 25px;
+  font-family: 'Press Start 2P';
 }
 
 
 .scoresDiv {
-  height: 100vh;
-  width: 200px;
+  height: 100%;
+  width: 300px;
   display: flex;
   flex-direction: column;
-  /* border: 1px solid white; */
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center
+  /* flex-grow: 1; */
 }
 
 .scoresDiv img {
-  width: 100%;
-  margin: 0 0 -50px 0;
+  width: 250px;
+  margin: 0 0 -20% 0;
+  align-self: center;
 }
 
 .scorePanel {
-  width: 90%;
-  height: 9%;
-  /* border: 1px solid red; */
+  width: 80%;
+  height: 12%;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  margin: 5px;
+  margin: 0 0 5px 0;
+  padding: 0 30px;
 }
 
 .scoresDiv2 {
@@ -91,41 +101,53 @@ input {
 }
 
 .scoresDiv2 .scorePanel {
-  width: 22%;
+  width: 18%;
   height: 40%;
-  border: 1px solid purple
+  margin: 20px;
 }
 
 .playerInputDiv img {
   height: 35%;
-  margin: 0 0 -80px 0;
+  margin: 0 0 -100px 0;
 }
 
 #currentPlayer {
   border: 2px dashed purple;
 }
 
-p, h1 {
+p {
   color: white;
   display: inline;
+  font-family: 'Press Start 2P';
+  font-size: 10px;
+}
 
+h1 {
+  color: white;
+  display: inline;
+  font-family: 'Press Start 2P';
+  font-size: 20px;
+}
 
+.infoPanel :last-child {
+  font-size: 15px;
+  padding: 10px;
+  line-height: 25px;
 }
 
 .infoDiv {
-  height: 100vh;
-  width: 200px;
+  height: 100%;
+  width: 300px;
   display: flex;
   flex-direction: column;
-  /* border: 1px solid white; */
   justify-content: space-around;
   align-items: center;
+  /* flex-grow: 1; */
 }
 
 .infoPanel {
   width: 90%;
   height: 9%;
-  /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -146,11 +168,10 @@ p, h1 {
   display: flex;
   flex-direction: row;
   /* border: 1px solid grey; */
-  width: 100vh;
-  height: 100vh;
+  width: 90vh;
+  height: 90vh;
   flex-wrap: wrap;
   background-color: black;
-  
 }
 
 
