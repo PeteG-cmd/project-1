@@ -45,6 +45,9 @@ function main() {
     let intervalId2
     let intervalId3
     let returningGhostInterval
+    let ghostFreezeDisplayInterval
+    let playerSpeedDisplayInterval
+    let ghostEatableDisplayInterval
     let playerIsHunter = false
     let ghostsAreFrozen = false
     let playerIsSpeedy = false
@@ -63,7 +66,7 @@ function main() {
     let chanceOfGhostMovingSmartly = 80 // this is as a percentage
     const timeGhostsRemainEatable = 10
     const timeGhostsRemainFrozen = 10
-    const timePlayerIsSpeedy = 10
+    const timePlayerIsSpeedy = 5
     const lifeCells = [177, 178, 179]
 
 
@@ -665,6 +668,8 @@ function main() {
         if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
           clearTimeout(ghostEatableTimer)
         }
+
+        handleDomDisplayGhostEatabletimer()
         cells[cellNum].classList.remove('superFoodEatable')
 
         clearTimeout(ghostReleaseTimer)
@@ -808,6 +813,7 @@ function main() {
         if (((ghosts.some((element) => element.ghostClass === 'freezeBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
           clearTimeout(ghostFreezeTimer)
         }
+        handleDomDisplayGhostFreezeTimer()
         cells[cellNum].classList.remove('superFoodFreeze')
 
         clearTimeout(ghostReleaseTimer)
@@ -846,11 +852,70 @@ function main() {
       }
     }
 
+    
+
+    function handleDomDisplayGhostFreezeTimer() {
+      const display1 = document.querySelector('#infoPanel1').lastChild
+      clearInterval(ghostFreezeDisplayInterval)
+      let i = 10.00
+      const superFoodDescription = 'wonder green'
+
+      ghostFreezeDisplayInterval = setInterval(() => {
+        display1.innerHTML = i.toFixed(2)
+        i -= 0.1
+        if (i <= 0) {
+          clearInterval(ghostFreezeDisplayInterval)
+          display1.innerHTML = superFoodDescription
+        }
+      }, 100)
+
+    }
+
+    
+
+    function handleDomDisplayPlayerSpeedTimer() {
+      const display = document.querySelector('#infoPanel2').lastChild
+      clearInterval(playerSpeedDisplayInterval)
+      let i = 5.00
+      const superFoodDescription = 'berry.. set... GO'
+
+      playerSpeedDisplayInterval = setInterval(() => {
+        display.innerHTML = i.toFixed(2)
+        i -= 0.1
+        if (i <= 0) {
+          clearInterval(playerSpeedDisplayInterval)
+          display.innerHTML = superFoodDescription
+        }
+      }, 100)
+
+    }
+
+    
+
+    function handleDomDisplayGhostEatabletimer() {
+      const display = document.querySelector('#infoPanel0').lastChild
+      clearInterval(ghostEatableDisplayInterval)
+      let i = 10.00
+      const superFoodDescription = 'bolt from the blue'
+
+      ghostEatableDisplayInterval = setInterval(() => {
+        display.innerHTML = i.toFixed(2)
+        i -= 0.1
+        if (i <= 0) {
+          clearInterval(ghostEatableDisplayInterval)
+          display.innerHTML = superFoodDescription
+        }
+      }, 100)
+
+    }
+
 
     function removeSuperFoodActivateSpeed(cellNum) {
       if (cells[cellNum].classList.contains('superFoodSpeed')) {
 
+        handleDomDisplayPlayerSpeedTimer()
         cells[cellNum].classList.remove('superFoodSpeed')
+
 
 
         clearInterval(intervalId2)
