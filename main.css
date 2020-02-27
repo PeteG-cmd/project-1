@@ -67,6 +67,26 @@ body {
   margin: 5px;
 }
 
+.scoresDiv2 {
+  /* height: 100vh; */
+  width: 90%;
+  /* height: 30px; */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: 1px solid white;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.scoresDiv2 .scorePanel {
+  width: 20%;
+}
+
+.playerInputDiv img {
+  height: 20%;
+}
+
 #currentPlayer {
   border: 2px dashed purple;
 }

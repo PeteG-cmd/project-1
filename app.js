@@ -61,6 +61,7 @@ function main() {
   let playerName = document.querySelector('#playerName').value
   mainGameScreen.style.display = 'none'
 
+  initialiseScoreBoard()
 
   startGameButton.addEventListener('click', () => {
 
@@ -105,6 +106,7 @@ function main() {
   function initialiseScoreBoard() {
 
     const scoreBoard = document.querySelector('.scoresDiv')
+    const scoreBoard2 = document.querySelector('.scoresDiv2')
 
     for (let i = 0; i < scores.length; i++) {
       const scorePanel = document.createElement('div')
@@ -127,7 +129,12 @@ function main() {
       scorePanel.appendChild(playerNameSection)
       scorePanel.appendChild(playerScoreSection)
 
-      scoreBoard.appendChild(scorePanel)
+      if (mainGameScreen.style.display === 'flex') {
+        scoreBoard.appendChild(scorePanel)
+      } else {
+        scoreBoard2.appendChild(scorePanel)
+
+      }
     }
   }
 
@@ -154,7 +161,6 @@ function main() {
         element.score = score
       }
     })
-    console.log(scores[0].score)
     orderAndUpdateScoreBoard()
 
   }
@@ -178,6 +184,12 @@ function main() {
         scores = playerScores
         console.log(scores)
       }
+    }
+    if (scores.length === 0) {
+      scores.push({ name: 'Blinky', score: '5000', currentPlayer: false })
+      scores.push({ name: 'Pinky', score: '2000', currentPlayer: false })
+      scores.push({ name: 'Inky', score: '1000', currentPlayer: false })
+      scores.push({ name: 'Clyde', score: '500', currentPlayer: false })
     }
   }
 
@@ -334,7 +346,7 @@ function main() {
 
         } else if (!(ghostPenCells.includes(this.currentCell))) {
 
-          if (this.cellOnPath !== '' && this.willFindCellOnPath() === true && playerIsHunter === false) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN. IT ALSO STOPS THE GHOST MOVING ON THE PATH IF THE PLAYER IS THE HUNETER
+          if (this.cellOnPath !== '' && this.willFindCellOnPath() === true && playerIsHunter === false) { // THIS IF STATEMENT CHECKS IF THE GHOST SHOLD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN. IT ALSO STOPS THE GHOST MOVING ON THE PATH IF THE PLAYER IS THE HUNTER
 
             // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
             this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
@@ -443,16 +455,23 @@ function main() {
           // console.log('Current queue:')
           // console.log(queue)
           let pathNotFound = true
+          console.log(this.availableDirections.length)
+          console.log(queue.length)
+
 
           while (pathNotFound) {
             const checkCell = queue.shift()
             // console.log('Current Check Cell Path')
             // console.log(checkCell.path)
+            console.log(checkCell)
+            console.log(checkCell.path)
+
 
             // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN A 10 CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
 
             if (checkCell.path.length > searchWidth - 1) {
               pathNotFound = false
+              // clearTimeout(stopLoopIfFrozenTimeout)
               // console.log(checkCell.path)
               // console.log('Path not Found - Distance above 10')
               this.cellOnPath = ''
@@ -460,6 +479,7 @@ function main() {
 
             if (checkCell.cellNumber === target) {
               pathNotFound = false
+              // clearTimeout(stopLoopIfFrozenTimeout)
               // console.log(checkCell.path)
               // console.log('Path Found and Target set')
               this.cellOnPath = checkCell.path[1]
@@ -698,8 +718,6 @@ function main() {
     while (pathNotFound) {
       const checkCell = queue.shift()
 
-      // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN A 10 CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
-
       if (checkCell.cellNumber === target) {
         pathNotFound = false
         pathBackToPen = checkCell.path
@@ -765,8 +783,9 @@ function main() {
 
       ghosts.map((element) => {
         if (!(ghostPenOccupied.includes(element.currentCell))) {
+          // element.pathNotFound = false //// THIS STOPS THE GHOSTS FREEZING AND AN ERROR BEING THROWN AS THE WHILE LOOP FOR FIND PATH IS NEVER EXITED
           cells[element.currentCell].classList.add('freezeBlue')
-          element.cellJustLeft = element.currentCell ///////////////////////////////////////////////////////
+          element.cellJustLeft = 211 ////THIS MEANS AFTER THE GHOSTS ARE FROZEN THEY DONT GET STUCK AND 'FIND NEXT CELL ON PATH' CAN FIRE
 
         }
       })
@@ -778,6 +797,7 @@ function main() {
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
             cells[element.currentCell].classList.remove('freezeBlue')
+
 
           }
         })
@@ -810,6 +830,7 @@ function main() {
   }
 
   function doesCellContainDude(cellToCheck) {
+    // if (cells[cellToCheck] === dude) {
     if ((cells[cellToCheck].classList.contains('dude-right')) || (cells[cellToCheck].classList.contains('dude-up')) || (cells[cellToCheck].classList.contains('dude-down')) || (cells[cellToCheck].classList.contains('dude-left')) || (cells[cellToCheck].classList.contains('dude-right-fast')) || (cells[cellToCheck].classList.contains('dude-up-fast')) || (cells[cellToCheck].classList.contains('dude-down-fast')) || (cells[cellToCheck].classList.contains('dude-left-fast'))) {
       return true
     }
@@ -829,7 +850,7 @@ function main() {
   function checkForGameOver() {
     if (playerIsHunter === false)
       ghosts.map((element) => {
-        if (cells[dude].classList.contains(element.name) || (doesCellContainDude(element.cellJustLeft) && ghostsAreFrozen === false)) {
+        if (cells[dude].classList.contains(element.name) || (doesCellContainDude(element.cellJustLeft))) {
 
           // cells[element.cellJustLeft].doesCellContainDude(element.cellJustLeft)) {
           clearSuperFoodTimeOuts()
@@ -1127,7 +1148,7 @@ function main() {
     intervalId = setInterval(() => {
 
       // if ((ghosts[0].ghostClass === ghosts[0].name)) { // THIS MAKES SURE WHILE GHOSTS ARE EATABLE THEY CAN NOT BE RELEASED FROM PEN. THIS MAY NEED TO BE CHANGED
-      if ((!((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) || ghostsAreFrozen === false) {
+      if (!((ghosts.some((element) => element.ghostClass === 'eatableBlue'))) && ghostsAreFrozen === false) {
         releaseGhosts()
       }
       if (ghostsAreFrozen === false) {
