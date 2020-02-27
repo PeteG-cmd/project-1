@@ -206,6 +206,16 @@ h2 {
   background-image: url(images/apple.png);
   background-size: contain;
   background-repeat: no-repeat;
+  animation: rotation 1.5s infinite linear;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
 
 .cellGate {
@@ -363,7 +373,6 @@ h2 {
   background-size: contain;
   background-repeat: no-repeat;
 }
-
 
 
 /* THIS HANDLES MOVING THE PALYER SMOOTHLY */

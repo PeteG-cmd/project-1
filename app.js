@@ -815,6 +815,13 @@ function main() {
 
     }
 
+    function ghostPenCellsLocked() {
+      penGateCells.map((element) => {
+        element.style.outline.color = 'red'
+
+      })
+    }
+
     function removeSuperFoodActivateFreeze(cellNum) {
       if (cells[cellNum].classList.contains('superFoodFreeze')) {
         if (((ghosts.some((element) => element.ghostClass === 'freezeBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
@@ -825,6 +832,8 @@ function main() {
 
         clearTimeout(ghostReleaseTimer)
         ghostReleaseCountdownActive = true
+        // ghostPenCellsLocked()
+
 
         if (ghostPenCellsFull() && playerIsHunter === false) {
           ghostReleaseCountdownActive = false
@@ -980,6 +989,7 @@ function main() {
 
               lives--
               cells[dude].classList.remove('apple')
+              ghostReleaseCountdownActive = false
 
               if (livesDoRemain()) {
                 resetAfterLifeLost()
@@ -1013,7 +1023,7 @@ function main() {
         clearInterval(intervalId)
         clearInterval(intervalId3)
         clearInterval(returningGhostInterval)
-        alert(`LEVEL COMPLETE! You scored ${score}...`)
+        // alert(`LEVEL COMPLETE! You scored ${score}...`)
         beginNextLevel()
       }
     }
