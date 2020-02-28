@@ -56,8 +56,8 @@ function main() {
     let ghostFreezeTimer
     let playerSpeedTimer
     let ghostReleaseTimer
-    const ghostSpeed = 0.4
-    const playerSpeed = 0.4
+    const ghostSpeed = 0.35
+    const playerSpeed = 0.35
     let lives = 5
     const numOfGhostsInGame = 4
     const secondsBetweenNewGhostGeneration = 8
@@ -1011,7 +1011,7 @@ function main() {
 
     function superFoodRemainingInGame() {
       cells.some((cell) => {
-        if (cell.classList.contains('superFoodEatable') || cell.classList.contains('superFoodFreeze') || cell.classList.contains('superFoodSpeed')) {
+        if ((cell.classList.contains('superFoodEatable')) || (cell.classList.contains('superFoodFreeze')) || (cell.classList.contains('superFoodSpeed'))) {
           return true
         }
       })

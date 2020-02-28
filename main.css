@@ -400,7 +400,7 @@ font-size: 15px;
 /* THIS HANDLES MOVING THE PALYER SMOOTHLY */
 
 .animate-dude-right {
-  animation: move-dude-right 0.4s linear;
+  animation: move-dude-right 0.35s linear;
 }
 
 @keyframes move-dude-right {
@@ -413,7 +413,7 @@ font-size: 15px;
 }
 
 .animate-dude-left {
-  animation: move-dude-left 0.4s linear;
+  animation: move-dude-left 0.35s linear;
 }
 
 @keyframes move-dude-left {
@@ -426,7 +426,7 @@ font-size: 15px;
 }
 
 .animate-dude-up {
-  animation: move-dude-up 0.4s linear;
+  animation: move-dude-up 0.35s linear;
 }
 
 @keyframes move-dude-up {
@@ -439,7 +439,7 @@ font-size: 15px;
 }
 
 .animate-dude-down {
-  animation: move-dude-down 0.4s linear;
+  animation: move-dude-down 0.35s linear;
 }
 
 @keyframes move-dude-down {
@@ -510,7 +510,7 @@ font-size: 15px;
 /* THIS HANDLES MOVING THE GHOSTS SMOOTHLY */
 
 .animate-ghost-right {
-  animation: move-ghost-right 0.4s linear;
+  animation: move-ghost-right 0.35s linear;
 }
 
 @keyframes move-ghost-right {
@@ -523,7 +523,7 @@ font-size: 15px;
 }
 
 .animate-ghost-left {
-  animation: move-ghost-left 0.4s linear;
+  animation: move-ghost-left 0.35s linear;
 }
 
 @keyframes move-ghost-left {
@@ -536,7 +536,7 @@ font-size: 15px;
 }
 
 .animate-ghost-up {
-  animation: move-ghost-up 0.4s linear;
+  animation: move-ghost-up 0.35s linear;
 }
 
 @keyframes move-ghost-up {
@@ -549,7 +549,7 @@ font-size: 15px;
 }
 
 .animate-ghost-down {
-  animation: move-ghost-down 0.4s linear;
+  animation: move-ghost-down 0.35s linear;
 }
 
 @keyframes move-ghost-down {
