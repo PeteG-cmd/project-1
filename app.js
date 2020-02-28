@@ -58,16 +58,16 @@ function main() {
     let ghostReleaseTimer
     const ghostSpeed = 0.4
     const playerSpeed = 0.4
-    let lives = 3
+    let lives = 5
     const numOfGhostsInGame = 4
     const secondsBetweenNewGhostGeneration = 8
     let secondsBetweenGhostRelease = 2.5
     let searchWidth = 7
-    let chanceOfGhostMovingSmartly = 75 // this is as a percentage
+    let chanceOfGhostMovingSmartly = 70 // this is as a percentage
     const timeGhostsRemainEatable = 8
     const timeGhostsRemainFrozen = 6
     const timePlayerIsSpeedy = 4
-    const lifeCells = [177, 178, 179]
+    const lifeCells = [160, 161, 162, 177, 178, 179]
 
 
     const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
@@ -231,10 +231,10 @@ function main() {
         }
       }
       if (scores.length === 0) {
-        scores.push({ name: 'Blinky', score: '5000', currentPlayer: false })
-        scores.push({ name: 'Pinky', score: '2000', currentPlayer: false })
-        scores.push({ name: 'Inky', score: '1000', currentPlayer: false })
-        scores.push({ name: 'Clyde', score: '500', currentPlayer: false })
+        scores.push({ name: 'Blinky', score: '7500', currentPlayer: false })
+        scores.push({ name: 'Pinky', score: '4000', currentPlayer: false })
+        scores.push({ name: 'Inky', score: '2000', currentPlayer: false })
+        scores.push({ name: 'Clyde', score: '1000', currentPlayer: false })
       }
     }
 
@@ -313,14 +313,6 @@ function main() {
       grid.appendChild(cell)
       cells.push(cell)
     }
-
-    // MAKE AND DISPLAY THE SCORE IN WHITE
-    cells[161].innerHTML = score
-    cells[161].classList.add('white')
-
-    cells[188].classList.remove('wall')
-    cells[188].classList.add('cellGate')
-
 
     function isASuperFoodEatableCell(cell) {
       if ((!(noFoodCells.includes(cell)) && (!(wallCells.includes(cell)))) && (superFoodEatableCells.includes(cell))) {
@@ -588,13 +580,13 @@ function main() {
 
       //SETS THE PLAYER DIRECTION TO BE USED AT EACH INTERVAL
 
-      if (event.key === 'ArrowRight') {
+      if (event.key === 'ArrowRight' && rightPlayerMoveIsValid()) {
         playerDirection = 2
-      } else if (event.key === 'ArrowLeft') {
+      } else if (event.key === 'ArrowLeft' && leftPlayerMoveIsValid()) {
         playerDirection = 4
-      } else if (event.key === 'ArrowDown') {
+      } else if (event.key === 'ArrowDown' && downPlayerMoveIsValid()) {
         playerDirection = 3
-      } else if (event.key === 'ArrowUp') {
+      } else if (event.key === 'ArrowUp' && upPlayerMoveIsValid()) {
         playerDirection = 1
       }
 
@@ -660,7 +652,7 @@ function main() {
       if (cells[cellNum].classList.contains('food')) {
         cells[cellNum].classList.remove('food')
         score += 10
-        cells[161].innerHTML = score
+        // scorep.innerHTML = score
         updateCurrentScorePanel()
       }
     }
@@ -690,7 +682,7 @@ function main() {
         }
 
         score += 50
-        cells[161].innerHTML = score
+        // scorep.innerHTML = score
         playerIsHunter = true
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
@@ -721,7 +713,7 @@ function main() {
 
           eatenGhosts.push(element.name)
           score += 100
-          cells[161].innerHTML = score
+          // scorep.innerHTML = score
           cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
 
           const path = calculateGhostReturnPath(element.currentCell)
@@ -851,7 +843,7 @@ function main() {
         }
 
         score += 50
-        cells[161].innerHTML = score
+        // scorep.innerHTML = score
         ghostsAreFrozen = true
 
         ghosts.map((element) => {
@@ -951,7 +943,7 @@ function main() {
         playerIsSpeedy = true
 
         score += 50
-        cells[161].innerHTML = score
+        // scorep.innerHTML = score
 
         playerSpeedTimer = setTimeout(() => {
           playerIsSpeedy = false
@@ -1019,7 +1011,7 @@ function main() {
 
     function superFoodRemainingInGame() {
       cells.some((cell) => {
-        if (cell.classList.contains('superFoodEatable')) {
+        if (cell.classList.contains('superFoodEatable') || cell.classList.contains('superFoodFreeze') || cell.classList.contains('superFoodSpeed')) {
           return true
         }
       })
@@ -1171,6 +1163,20 @@ function main() {
 
     }
 
+    function upPlayerMoveIsValid() {
+      return (!(wallCells.includes(dude - width)))
+    }
+    function rightPlayerMoveIsValid() {
+      return (!(wallCells.includes(dude + 1)))
+    }
+
+    function downPlayerMoveIsValid() {
+      return (!(wallCells.includes(dude + width)))
+    }
+
+    function leftPlayerMoveIsValid() {
+      return (!(wallCells.includes(dude - 1)))
+    }
 
 
     function movePlayerUp() {
@@ -1278,7 +1284,7 @@ function main() {
       mainGameScreen.style.display = 'none'
       gameCountdownScreen.style.display = 'flex'
 
-      let i = 6
+      let i = 7
 
       const gameStartingInterval = setInterval(() => {
         i--
@@ -1291,6 +1297,10 @@ function main() {
 
           if (interval === 'newLevel') {
             countDownTextDisplay.innerHTML = 'LEVEL ' + level + '. GET READY...'
+            if (level === 3 && i === 6) {
+              lives ++
+              countDownTextDisplay.innerHTML += '<br><br> EXTRA LIFE AWARDED'
+            }
           } else if (interval === 'lifeLost' && lives === 1) {
             countDownTextDisplay.innerHTML = lives + ' LIFE REMAINING. GET READY...'
           } else if (interval === 'lifeLost') {
