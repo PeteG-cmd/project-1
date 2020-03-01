@@ -588,6 +588,15 @@ function main() {
       console.log(ghosts)
     }
 
+    function flashPenGateGreen(gateNumber) {
+      cells[gateNumber].classList.remove('cellGate')
+      cells[gateNumber].classList.add('cellGateOpen')
+      setTimeout(() => {
+        cells[gateNumber].classList.remove('cellGateOpen')
+        cells[gateNumber].classList.add('cellGate')
+      }, 700)
+    }
+
     function startGhostReleaseTimer() {
       ghostReleaseTimer = setTimeout(() => {
         if (ghostPenOccupied.length > 0) {
@@ -595,6 +604,7 @@ function main() {
             if (element.currentCell === ghostPenOccupied[0]) {
               cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
               cells[element.currentCell].classList.remove('eatableBlue')
+              flashPenGateGreen(element.currentCell - width)
               element.currentCell -= 40
               eatenGhosts.shift() //THIS REACTIVATES THE PATH FINDING OF THE GHOST
               cells[element.currentCell].classList.add(element.ghostClass)
@@ -641,7 +651,7 @@ function main() {
     }
 
     function ghostPenCellsFull() {
-      ghostPenOccupied.length >= 4
+      return ghostPenOccupied.length >= 4
     }
 
 
@@ -923,19 +933,6 @@ function main() {
       return pathBackToPen
     }
 
-    // function ghostPenCellsLocked() {
-    //   penGateCells.map((element) => {
-    //     element.classList.remove('cellGate')
-    //     element.classList.add('cellGateLocked')
-    //   })
-    // }
-
-    // function ghostPenCellsUnLocked() {
-    //   penGateCells.map((element) => {
-    //     element.classList.remove('cellGateLocked')
-    //     element.classList.add('cellGate')
-    //   })
-    // }
 
     function removeSuperFoodActivateFreeze(cellNum) {
       if (cells[cellNum].classList.contains('superFoodFreeze')) {
@@ -986,7 +983,7 @@ function main() {
       clearInterval(ghostFreezeDisplayInterval)
       let i = timeGhostsRemainFrozen
       const superFoodDescription = 'wonder green'
-      
+
 
       ghostFreezeDisplayInterval = setInterval(() => {
         display.innerHTML = i.toFixed(2)
@@ -1219,6 +1216,14 @@ function main() {
       levelDisplay.innerHTML = 'LEVEL ' + level
     }
 
+    // function removeEatenGhostsOnPathFromMap() {
+    //   cells.map((element) => {
+    //     if (element.classList.includes('eatableBlue')) {
+    //       element.classList.remove('eatableBlue')
+    //     }
+    //   })
+    // }
+
     function beginNextLevel() {
       if (level === 1 || level === 2 || level === 3 || level === 4) {
         level++
@@ -1227,6 +1232,7 @@ function main() {
         searchWidth += 1
         playerMissiles = 0
 
+        // removeEatenGhostsOnPathFromMap()
         removeRandomSuperFood(1)
         removeGhostsFromGame()
         movePlayerToStartingLocation()
