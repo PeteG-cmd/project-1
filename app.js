@@ -231,22 +231,25 @@ function main() {
     const superFoodPower = ['EAT', 'FREEZE', 'SPEED', 'SHOOT']
     const superFoodGraphics = ['images/bolt-from-the-blue-1.png', 'images/wonder-green.png', 'images/berry-set-go.png', 'images/citrus-shield.png']
 
+    createLevelDisplay()
+
     for (let i = 0; i < superFoods.length; i++) {
       const infoPanel = document.createElement('div')
       infoPanel.classList.add('infoPanel')
       infoPanel.id = 'infoPanel' + i
       const superFoodGraphic = document.createElement('img')
       const superFoodDescription = document.createElement('p')
+      superFoodDescription.id = 'timeDisplay' + i
+      const superFoodPowerDescription = document.createElement('p')
 
       superFoodGraphic.src = superFoodGraphics[i]
       superFoodDescription.innerHTML = superFoods[i]
-      // superFoodDescription.innerHTML += '<br>'
-      // superFoodDescription.innerHTML += '= ' + superFoodPower[i] + '...'
-
+      superFoodPowerDescription.innerHTML = superFoodPower[i]
       superFoodDescription.style.color = superFoodColor[i]
 
       infoPanel.appendChild(superFoodGraphic)
       infoPanel.appendChild(superFoodDescription)
+      infoPanel.appendChild(superFoodPowerDescription)
 
       infoBoard.appendChild(infoPanel)
       infos.push(infoBoard)
@@ -979,50 +982,57 @@ function main() {
     }
 
     function handleDomDisplayGhostFreezeTimer() {
-      const display1 = document.querySelector('#infoPanel1').lastChild
+      const display = document.querySelector('#timeDisplay1')
       clearInterval(ghostFreezeDisplayInterval)
       let i = timeGhostsRemainFrozen
       const superFoodDescription = 'wonder green'
+      
 
       ghostFreezeDisplayInterval = setInterval(() => {
-        display1.innerHTML = i.toFixed(2)
+        display.innerHTML = i.toFixed(2)
+        display.style.fontSize = '130%'
         i -= 0.1
         if (i <= 0) {
           clearInterval(ghostFreezeDisplayInterval)
-          display1.innerHTML = superFoodDescription
+          display.innerHTML = superFoodDescription
+          display.style.fontSize = '80%'
         }
       }, 100)
 
     }
 
     function handleDomDisplayPlayerSpeedTimer() {
-      const display = document.querySelector('#infoPanel2').lastChild
+      const display = document.querySelector('#timeDisplay2')
       clearInterval(playerSpeedDisplayInterval)
       let i = timePlayerIsSpeedy
       const superFoodDescription = 'berry.. set... GO'
 
       playerSpeedDisplayInterval = setInterval(() => {
         display.innerHTML = i.toFixed(2)
+        display.style.fontSize = '130%'
         i -= 0.1
         if (i <= 0) {
           clearInterval(playerSpeedDisplayInterval)
           display.innerHTML = superFoodDescription
+          display.style.fontSize = '80%'
         }
       }, 100)
     }
 
     function handleDomDisplayGhostEatabletimer() {
-      const display = document.querySelector('#infoPanel0').lastChild
+      const display = document.querySelector('#timeDisplay0')
       clearInterval(ghostEatableDisplayInterval)
       let i = timeGhostsRemainEatable
       const superFoodDescription = 'bolt from the blue'
 
       ghostEatableDisplayInterval = setInterval(() => {
         display.innerHTML = i.toFixed(2)
+        display.style.fontSize = '130%'
         i -= 0.1
         if (i <= 0) {
           clearInterval(ghostEatableDisplayInterval)
           display.innerHTML = superFoodDescription
+          display.style.fontSize = '80%'
         }
       }, 100)
     }
@@ -1044,8 +1054,8 @@ function main() {
     }
 
     function handleDomDisplayMissileCount() {
-      const display1 = document.querySelector('#infoPanel3').lastChild
-      display1.innerHTML = playerMissiles
+      const display1 = document.querySelector('#timeDisplay3')
+      display1.innerHTML = playerMissiles + ' x Missile'
     }
 
 
@@ -1191,6 +1201,24 @@ function main() {
       }
     }
 
+    function createLevelDisplay() {
+      const infoBoard = document.querySelector('.infoDiv')
+      const infoPanel = document.createElement('div')
+      infoPanel.classList.add('infoPanelLevel')
+      infoPanel.id = 'levelDisplay'
+      const levelDisplay = document.createElement('h2')
+      levelDisplay.id = 'levelDisplayText'
+      levelDisplay.innerHTML = 'LEVEL ' + level
+      infoPanel.appendChild(levelDisplay)
+      infoBoard.appendChild(infoPanel)
+
+    }
+
+    function updateLevelDisplay() {
+      const levelDisplay = document.querySelector('#levelDisplayText')
+      levelDisplay.innerHTML = 'LEVEL ' + level
+    }
+
     function beginNextLevel() {
       if (level === 1 || level === 2 || level === 3 || level === 4) {
         level++
@@ -1204,6 +1232,7 @@ function main() {
         movePlayerToStartingLocation()
         displayLives(lives)
         resetGameBoard()
+        updateLevelDisplay()
         playerDirection = ''
         handleGameInterval('newLevel')
 
