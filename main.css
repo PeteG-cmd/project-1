@@ -238,7 +238,12 @@ h2 {
 }
 
 .cellGateLocked {
-  outline: 2px double red;
+  outline: 2px double rgba(206, 3, 3, 0.829);
+  outline-offset: -10px;
+}
+
+.cellGateOpen {
+  outline: 2px double rgb(135, 243, 11);
   outline-offset: -10px;
 }
 
@@ -413,25 +418,31 @@ font-size: 15px;
 }
 
 .missile-up {
-  background-image: url(images/missile-up.png);
+  background-image: url(images/citrus-missile-up.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .missile-right {
-  background-image: url(images/missile-right.png);
+  background-image: url(images/citrus-missile-right.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .missile-down {
-  background-image: url(images/missile-down.png);
+  background-image: url(images/citrus-missile-down.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
 
 .missile-left {
-  background-image: url(images/missile-left.png);
+  background-image: url(images/citrus-missile-left.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.boom {
+  background-image: url(images/boom.png);
   background-size: contain;
   background-repeat: no-repeat;
 }

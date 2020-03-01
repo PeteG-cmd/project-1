@@ -641,16 +641,17 @@ function main() {
       ghostPenOccupied.length >= 4
     }
 
-    
+
 
     function removeSuperFoodArmMissile(cellNum) {
       if (cells[cellNum].classList.contains('superFoodMissile')) {
 
         cells[cellNum].classList.remove('superFoodMissile')
-        playerMissiles += 1
+        playerMissiles += 2
+        handleDomDisplayMissileCount()
       }
     }
-    
+
 
     function checkMissileCanFireOrContinue() {
       return (!(wallCells.includes(missile + missileDirection)))
@@ -663,6 +664,7 @@ function main() {
           score += 150
           cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
           const path = calculateGhostReturnPath(element.currentCell)
+          missileBoom(missile)
           removeAllMissileClasses()
           missileIsActive = false
 
@@ -700,7 +702,7 @@ function main() {
         cells[missile].classList.add('animate-missile-left')
       }
     }
- 
+
     function removeAllMissileClasses() {
       cells[missile].classList.remove('missile-up')
       cells[missile].classList.remove('animate-missile-up')
@@ -710,6 +712,14 @@ function main() {
       cells[missile].classList.remove('animate-missile-down')
       cells[missile].classList.remove('missile-left')
       cells[missile].classList.remove('animate-missile-left')
+    }
+
+    function missileBoom(cellNum) {
+      cells[cellNum].classList.add('boom')
+      setTimeout(() => {
+        cells[cellNum].classList.remove('boom')
+      }, 150)
+
     }
 
     fireMissile()
@@ -729,11 +739,14 @@ function main() {
               } else if (playerDirection === 4) {
                 missileDirection = -1
               }
+
               missile = dude
+
               if (checkMissileCanFireOrContinue()) {
                 missileIsActive = true
                 checkMissileHasHitGhost()
                 playerMissiles -= 1
+                handleDomDisplayMissileCount()
                 missile += missileDirection
                 if (missileIsActive === true) {
                   addMissileClassNeeded()
@@ -749,6 +762,7 @@ function main() {
                     }
                   } else {
                     removeAllMissileClasses()
+                    missileBoom(missile)
                     clearInterval(missileInterval)
                     missileIsActive = false
                   }
@@ -1011,7 +1025,27 @@ function main() {
           display.innerHTML = superFoodDescription
         }
       }, 100)
+    }
 
+    function handleCellGateColor() {
+      penGateCells.map((element) => {
+        if (playerIsHunter === false && ghostsAreFrozen === false) {
+          if (cells[element].classList.contains('cellGateLocked')) {
+            cells[element].classList.remove('cellGateLocked')
+            cells[element].classList.add('cellGate')
+          }
+        } else {
+          if (cells[element].classList.contains('cellGate')) {
+            cells[element].classList.remove('cellGate')
+            cells[element].classList.add('cellGateLocked')
+          }
+        }
+      })
+    }
+
+    function handleDomDisplayMissileCount() {
+      const display1 = document.querySelector('#infoPanel3').lastChild
+      display1.innerHTML = playerMissiles
     }
 
 
@@ -1097,11 +1131,6 @@ function main() {
       return cells.some((cell) => ((cell.classList.contains('superFoodEatable')) || (cell.classList.contains('superFoodFreeze')) || (cell.classList.contains('superFoodSpeed'))))
     }
 
-    //THIS IS CURRENTL NOT USED
-    function checkForSuperFoodEatable() {
-      return cells.some((cell) => cell.classList.contains('superFoodEatable'))
-    }
-
     function checkForGameWon() {
       const foodRemaining = cells.some((cell) => {
         return cell.classList.contains('food')
@@ -1146,19 +1175,37 @@ function main() {
       }
     }
 
+    function removeRandomSuperFood(numToRemove) {
+
+      for (let i = 0; i < numToRemove; i++) {
+        const randomNumber = Math.floor(Math.random() * 4)
+        if (randomNumber === 0) {
+          superFoodEatableCells.pop()
+        } else if (randomNumber === 1) {
+          superFoodFreezeCells.pop()
+        } else if (randomNumber === 2) {
+          superFoodFreezeCells.pop()
+        } else {
+          superFoodMissileCells.pop()
+        }
+      }
+    }
+
     function beginNextLevel() {
       if (level === 1 || level === 2 || level === 3 || level === 4) {
         level++
         secondsBetweenGhostRelease -= 0.5
         chanceOfGhostMovingSmartly += 4
         searchWidth += 1
+        playerMissiles = 0
 
+        removeRandomSuperFood(1)
         removeGhostsFromGame()
         movePlayerToStartingLocation()
         displayLives(lives)
         resetGameBoard()
-        playerDirection =
-          handleGameInterval('newLevel')
+        playerDirection = ''
+        handleGameInterval('newLevel')
 
       } else {
         handleGameInterval('gameWon')
@@ -1190,6 +1237,11 @@ function main() {
         if (isASuperFoodFreezeCell(i)) {
           cells[i].classList.remove('food')
           cells[i].classList.add('superFoodFreeze')
+        }
+
+        if (isASuperFoodMissileCell(i)) {
+          cells[i].classList.remove('food')
+          cells[i].classList.add('superFoodMissile')
         }
       }
     }
@@ -1361,11 +1413,13 @@ function main() {
 
           if (interval === 'newLevel') {
             countDownTextDisplay.innerHTML = 'LEVEL ' + level + '. GET READY...'
+            // countDownTextDisplay.innerHTML += '<br><br><br> 1 x SUPERFOOD REMOVED'
+            // countDownTextDisplay.innerHTML += '<br><br> GHOST INTELIGENCE INCREASED'
             if (level === 3 && i === 6) {
               lives++
             }
             if (level === 3 && i > 3) {
-              countDownTextDisplay.innerHTML += '<br><br> EXTRA LIFE AWARDED'
+              countDownTextDisplay.innerHTML += '<br><br><br> EXTRA LIFE AWARDED'
             }
           } else if (interval === 'lifeLost' && lives === 1) {
             countDownTextDisplay.innerHTML = lives + ' LIFE REMAINING. GET READY...'
@@ -1433,6 +1487,7 @@ function main() {
         removeSuperFoodActivateFreeze(dude)
         removeSuperFoodActivateSpeed(dude)
         removeSuperFoodArmMissile(dude)
+        handleCellGateColor()
 
 
       }, 10)
