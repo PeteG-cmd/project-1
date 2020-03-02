@@ -676,7 +676,7 @@ function main() {
           eatenGhosts.push(element.name)
           score += 150
           cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
-          const path = calculateGhostReturnPath(element.currentCell)
+          const path = calculateGhostReturnPath(element.currentCell, 249)
           missileBoom(missile)
           removeAllMissileClasses()
           missileIsActive = false
@@ -789,6 +789,7 @@ function main() {
 
 
 
+
     function removeSuperFoodActivateChase(cellNum) {
 
       if (cells[cellNum].classList.contains('superFoodEatable')) {
@@ -796,7 +797,7 @@ function main() {
           clearTimeout(ghostEatableTimer)
         }
 
-        handleDomDisplayGhostEatabletimer()
+        
         cells[cellNum].classList.remove('superFoodEatable')
 
         clearTimeout(ghostReleaseTimer)
@@ -811,6 +812,7 @@ function main() {
         score += 50
         // scorep.innerHTML = score
         playerIsHunter = true
+        handleDomDisplayGhostEatabletimer()
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
             cells[element.currentCell].classList.remove(element.name)
@@ -843,7 +845,7 @@ function main() {
           // scorep.innerHTML = score
           cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
 
-          const path = calculateGhostReturnPath(element.currentCell)
+          const path = calculateGhostReturnPath(element.currentCell, 249)
 
           element.currentCell = (ghostPenCells.find((element) => !(ghostPenOccupied.includes(element))))
           ghostPenOccupied.push(element.currentCell) // THIS IS MAKING SURE THE NEXT GHOST EATEN DOESNT GO TO THE SAME CELL
@@ -878,11 +880,11 @@ function main() {
       }, 100)
     }
 
-    function calculateGhostReturnPath(currentGhostCell) { ///THIS IS WHAT I AM WORKING ON /////////////////
+    function calculateGhostReturnPath(currentGhostCell, targetCell) {
 
       let pathBackToPen
       const queue = []
-      const target = 249
+      const target = targetCell
 
       queue.push(new Location(currentGhostCell, [currentGhostCell]))
       let pathNotFound = true
@@ -939,7 +941,7 @@ function main() {
         if (((ghosts.some((element) => element.ghostClass === 'freezeBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
           clearTimeout(ghostFreezeTimer)
         }
-        handleDomDisplayGhostFreezeTimer()
+
         cells[cellNum].classList.remove('superFoodFreeze')
 
         clearTimeout(ghostReleaseTimer)
@@ -955,6 +957,7 @@ function main() {
         score += 50
         // scorep.innerHTML = score
         ghostsAreFrozen = true
+        handleDomDisplayGhostFreezeTimer()
 
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
@@ -978,23 +981,46 @@ function main() {
       }
     }
 
+    function clearTimeOutandDomDisplayIfAllGhostsEaten() {
+      if (ghostPenCellsFull() && (playerIsHunter === true || ghostsAreFrozen === true)) {
+        playerIsHunter = false
+        ghostsAreFrozen = false
+        clearTimeout(ghostEatableTimer)
+        clearTimeout(ghostFreezeTimer)
+        // clearInterval(ghostFreezeDisplayInterval)
+        handleDomDisplayGhostFreezeTimer()
+        // clearInterval(ghostEatableDisplayInterval)
+        handleDomDisplayGhostEatabletimer()
+        ghostReleaseCountdownActive = false
+      }
+    }
+
     function handleDomDisplayGhostFreezeTimer() {
+
       const display = document.querySelector('#timeDisplay1')
+      const superFoodDescription = 'wonder green'
       clearInterval(ghostFreezeDisplayInterval)
       let i = timeGhostsRemainFrozen
-      const superFoodDescription = 'wonder green'
+
+      if (ghostsAreFrozen === false) {
+        clearInterval(ghostFreezeDisplayInterval)
+        display.innerHTML = superFoodDescription
+        display.style.fontSize = '80%'
+
+      } else {
 
 
-      ghostFreezeDisplayInterval = setInterval(() => {
-        display.innerHTML = i.toFixed(2)
-        display.style.fontSize = '130%'
-        i -= 0.1
-        if (i <= 0) {
-          clearInterval(ghostFreezeDisplayInterval)
-          display.innerHTML = superFoodDescription
-          display.style.fontSize = '80%'
-        }
-      }, 100)
+        ghostFreezeDisplayInterval = setInterval(() => {
+          display.innerHTML = i.toFixed(2)
+          display.style.fontSize = '130%'
+          i -= 0.1
+          if (i <= 0) {
+            clearInterval(ghostFreezeDisplayInterval)
+            display.innerHTML = superFoodDescription
+            display.style.fontSize = '80%'
+          }
+        }, 100)
+      }
 
     }
 
@@ -1022,21 +1048,30 @@ function main() {
       let i = timeGhostsRemainEatable
       const superFoodDescription = 'bolt from the blue'
 
-      ghostEatableDisplayInterval = setInterval(() => {
-        display.innerHTML = i.toFixed(2)
-        display.style.fontSize = '130%'
-        i -= 0.1
-        if (i <= 0) {
-          clearInterval(ghostEatableDisplayInterval)
-          display.innerHTML = superFoodDescription
-          display.style.fontSize = '80%'
-        }
-      }, 100)
+      if (playerIsHunter === false) {
+        clearInterval(ghostEatableDisplayInterval)
+        display.innerHTML = superFoodDescription
+        display.style.fontSize = '80%'
+
+      } else {
+
+        ghostEatableDisplayInterval = setInterval(() => {
+          display.innerHTML = i.toFixed(2)
+          display.style.fontSize = '130%'
+          i -= 0.1
+          if (i <= 0) {
+            clearInterval(ghostEatableDisplayInterval)
+            display.innerHTML = superFoodDescription
+            display.style.fontSize = '80%'
+          }
+        }, 100)
+      }
+
     }
 
     function handleCellGateColor() {
       penGateCells.map((element) => {
-        if (playerIsHunter === false && ghostsAreFrozen === false) {
+        if ((playerIsHunter === false && ghostsAreFrozen === false) || ghostPenCellsFull()) {
           if (cells[element].classList.contains('cellGateLocked')) {
             cells[element].classList.remove('cellGateLocked')
             cells[element].classList.add('cellGate')
@@ -1216,14 +1251,6 @@ function main() {
       levelDisplay.innerHTML = 'LEVEL ' + level
     }
 
-    // function removeEatenGhostsOnPathFromMap() {
-    //   cells.map((element) => {
-    //     if (element.classList.includes('eatableBlue')) {
-    //       element.classList.remove('eatableBlue')
-    //     }
-    //   })
-    // }
-
     function beginNextLevel() {
       if (level === 1 || level === 2 || level === 3 || level === 4) {
         level++
@@ -1278,6 +1305,8 @@ function main() {
           cells[i].classList.remove('food')
           cells[i].classList.add('superFoodMissile')
         }
+
+        cells[i].classList.remove('eatableBlue')
       }
     }
 
@@ -1523,6 +1552,8 @@ function main() {
         removeSuperFoodActivateSpeed(dude)
         removeSuperFoodArmMissile(dude)
         handleCellGateColor()
+        clearTimeOutandDomDisplayIfAllGhostsEaten()
+
 
 
       }, 10)
