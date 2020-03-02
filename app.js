@@ -3,29 +3,6 @@ function main() {
 
   launchGame()
   function launchGame() {
-    // resetDom()
-
-    // function resetDom() {
-    //   const scoresDiv = document.querySelector('.scoresDiv')
-    //   const scoresDiv2 = document.querySelector('.scoresDiv2')
-    //   const infoDiv = document.querySelector('.infoDiv')
-    //   const grid = document.querySelector('.grid')
-
-    //   while (scoresDiv.hasChildNodes() && scoresDiv.childElementCount !== 1) {
-    //     scoresDiv.removeChild(scoresDiv.lastChild)
-    //   }
-    //   while (scoresDiv2.hasChildNodes()) {
-    //     scoresDiv2.removeChild(scoresDiv2.lastChild)
-    //   }
-    //   while (infoDiv.hasChildNodes()) {
-    //     infoDiv.removeChild(infoDiv.lastChild)
-    //   }
-    //   while (grid.hasChildNodes()) {
-    //     grid.removeChild(grid.lastChild)
-    //   }
-    // }
-
-
 
     //SET UP VARIABLES NEEDED
 
@@ -67,12 +44,12 @@ function main() {
     const timeGhostsRemainEatable = 8
     const timeGhostsRemainFrozen = 6
     const timePlayerIsSpeedy = 4
-    const lifeCells = [161, 162, 177, 178, 179]
     let playerMissiles = 0
     let missileInterval
     let missileDirection
     let missile
     let missileIsActive = false
+    const directionsCount = [width, -width, 1, -1]
 
 
     const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
@@ -80,6 +57,8 @@ function main() {
     const noFoodCells = [160, 161, 162, 166, 167, 168, 169, 170, 171, 172, 173, 200, 208, 209, 210, 211, 219, 246, 247, 248, 249, 250, 251, 252, 253]
 
     const penGateCells = [188, 189, 190, 191]
+
+    const lifeCells = [161, 162, 177, 178, 179]
 
     const superFoodEatableCells = [24, 215]
     const superFoodFreezeCells = [126, 336]
@@ -101,9 +80,7 @@ function main() {
     startGameButton.addEventListener('click', () => {
 
       playerName = document.querySelector('#playerName').value
-      // checkNameIsUnique(playerName)
-
-
+   
       scores.map((element) => {
         if (element.currentPlayer === true) {
           element.currentPlayer = false
@@ -118,10 +95,6 @@ function main() {
       playerNameInputScreen.style.display = 'none'
       mainGameScreen.style.display = 'flex'
       initialiseScoreBoard()
-      // setTimeout(() => {
-      //   startGame(numOfGhostsInGame)
-      // }, 3000)
-
       handleGameInterval('newLevel')
 
     })
@@ -263,10 +236,11 @@ function main() {
     for (let i = 0; i < gridCellCount; i++) {
       const cell = document.createElement('div')
       cell.classList.add('cell')
-      // cell.innerHTML = i // REMOVE ONCE FINISHED WITH NUMBERS
+
       if (i === dude) {
         cell.classList.add('dude-right')
       }
+
       if (!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) {
         cell.classList.add('food')
       }
@@ -355,11 +329,11 @@ function main() {
         this.directionMoving
         this.availableDirections = []
         this.cellOnPath
-        this.cellJustLeft = currentCell //NEEDED FOR ENDING GAME WITHOUT GLITCHES AND PLAYER BEING ABLE TO 'CROSSOVER' ANY OF THE GHOSTS
+        this.cellJustLeft = currentCell
 
       }
       setAvailableDirections() {
-
+        
         if ((!(wallCells.includes(this.currentCell + 1))) && this.directionMoving !== 4) {
           this.availableDirections.push(this.currentCell + 1)
         }
@@ -398,8 +372,6 @@ function main() {
 
               // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
               this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
-
-              // cells[this.currentCell].classList.remove(this.ghostClass)
               this.removeAllGhostClasses()
               this.cellJustLeft = this.currentCell
               this.currentCell = this.cellOnPath
@@ -489,14 +461,11 @@ function main() {
 
         if (!(eatenGhosts.includes(this.name))) { // THIS REMOVES THE GHOST FROM EVALUATION IF IT HAS BEEN EATEN
 
-
           if (this.availableDirections.length > 1) {
             const queue = []
             const target = dude
 
             queue.push(new Location(this.currentCell, [this.currentCell]))
-            // console.log('Current queue:')
-            // console.log(queue)
             let pathNotFound = true
 
             while (pathNotFound) {
@@ -506,54 +475,24 @@ function main() {
 
               if (checkCell.path.length > searchWidth - 1) {
                 pathNotFound = false
-                // clearTimeout(stopLoopIfFrozenTimeout)
-                // console.log(checkCell.path)
-                // console.log('Path not Found - Distance above 10')
                 this.cellOnPath = ''
               }
 
               if (checkCell.cellNumber === target) {
                 pathNotFound = false
-                // clearTimeout(stopLoopIfFrozenTimeout)
-                // console.log(checkCell.path)
-                // console.log('Path Found and Target set')
                 this.cellOnPath = checkCell.path[1]
               }
 
               // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH OF LENGTH 1 ,2, 3 etc, UNTIL IT FINDS THE TARGET
+              directionsCount.map((directionCount) => {
 
-              if (!(wallCells.includes(checkCell.cellNumber + 1)) && (!(checkCell.path.includes(checkCell.cellNumber + 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
-                checkCell.path.push(checkCell.cellNumber + 1)
-                const newPath = checkCell.path.slice()
-                queue.push(new Location(checkCell.cellNumber + 1, newPath))
-                checkCell.path.pop()
-                // console.log('Checking right')
-              }
-              if (!(wallCells.includes(checkCell.cellNumber - 1)) && (!(checkCell.path.includes(checkCell.cellNumber - 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
-
-                checkCell.path.push(checkCell.cellNumber - 1)
-                const newPath = checkCell.path.slice()
-                queue.push(new Location(checkCell.cellNumber - 1, newPath))
-                checkCell.path.pop()
-                // console.log('Checking left')
-
-              }
-              if (!(wallCells.includes(checkCell.cellNumber + width)) && (!(checkCell.path.includes(checkCell.cellNumber + width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
-
-                checkCell.path.push(checkCell.cellNumber + width)
-                const newPath = checkCell.path.slice()
-                queue.push(new Location(checkCell.cellNumber + width, newPath))
-                checkCell.path.pop()
-                // console.log('Checking down')
-              }
-              if (!(wallCells.includes(checkCell.cellNumber - width)) && (!(checkCell.path.includes(checkCell.cellNumber - width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
-
-                checkCell.path.push(checkCell.cellNumber - width)
-                const newPath = checkCell.path.slice()
-                queue.push(new Location(checkCell.cellNumber - width, newPath))
-                checkCell.path.pop()
-                // console.log('Checking up')
-              }
+                if (!(wallCells.includes(checkCell.cellNumber + directionCount)) && (!(checkCell.path.includes(checkCell.cellNumber + directionCount))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+                  checkCell.path.push(checkCell.cellNumber + directionCount)
+                  const newPath = checkCell.path.slice()
+                  queue.push(new Location(checkCell.cellNumber + directionCount, newPath))
+                  checkCell.path.pop()
+                }
+              })
             }
           }
         }
@@ -793,48 +732,49 @@ function main() {
     function removeSuperFoodActivateChase(cellNum) {
 
       if (cells[cellNum].classList.contains('superFoodEatable')) {
-        if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
-          clearTimeout(ghostEatableTimer)
-        }
-
-        
         cells[cellNum].classList.remove('superFoodEatable')
-
+        checkIfEatablePeriodAlreadyActive()
         clearTimeout(ghostReleaseTimer)
         ghostReleaseCountdownActive = true //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
-        // ghostPenCellsLocked()
-
-        if ((ghostPenCellsFull()) && ghostsAreFrozen === false) {
-          ghostReleaseCountdownActive = false
-          // ghostPenCellsUnLocked()
-        }
-
         score += 50
-        // scorep.innerHTML = score
         playerIsHunter = true
         handleDomDisplayGhostEatabletimer()
-        ghosts.map((element) => {
-          if (!(ghostPenOccupied.includes(element.currentCell))) {
-            cells[element.currentCell].classList.remove(element.name)
-            cells[element.currentCell].classList.add('eatableBlue')
-            element.ghostClass = 'eatableBlue'
-          }
-        })
-
-        ghostEatableTimer = setTimeout(() => {
-          playerIsHunter = false
-          ghosts.map((element) => {
-            cells[element.currentCell].classList.remove('eatableBlue')
-            element.ghostClass = element.name
-            cells[element.currentCell].classList.add(element.name)
-            ghostReleaseCountdownActive = false
-            // ghostPenCellsUnLocked()
-
-          })
-
-        }, timeGhostsRemainEatable * 1000)
+        setGhostsToEatable()
+        startGhostEatableTimeOut()
       }
-      // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
+      returnGhostToPenIfEaten()
+    }
+
+    function checkIfEatablePeriodAlreadyActive() {
+      if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
+        clearTimeout(ghostEatableTimer)
+      }
+    }
+
+    function setGhostsToEatable() {
+      ghosts.map((element) => {
+        if (!(ghostPenOccupied.includes(element.currentCell))) {
+          cells[element.currentCell].classList.remove(element.name)
+          cells[element.currentCell].classList.add('eatableBlue')
+          element.ghostClass = 'eatableBlue'
+        }
+      })
+    }
+
+    function startGhostEatableTimeOut() {
+      ghostEatableTimer = setTimeout(() => {
+        playerIsHunter = false
+        ghosts.map((element) => {
+          cells[element.currentCell].classList.remove('eatableBlue')
+          element.ghostClass = element.name
+          cells[element.currentCell].classList.add(element.name)
+          ghostReleaseCountdownActive = false
+        })
+      }, timeGhostsRemainEatable * 1000)
+    }
+
+
+    function returnGhostToPenIfEaten() { // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
       ghosts.map((element) => {
 
         if ((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft) && element.ghostClass === 'eatableBlue') {
@@ -860,6 +800,7 @@ function main() {
         }
       })
     }
+
 
     function sendEatanGhostOnPath(path, ghostCell) {
 
@@ -987,9 +928,7 @@ function main() {
         ghostsAreFrozen = false
         clearTimeout(ghostEatableTimer)
         clearTimeout(ghostFreezeTimer)
-        // clearInterval(ghostFreezeDisplayInterval)
         handleDomDisplayGhostFreezeTimer()
-        // clearInterval(ghostEatableDisplayInterval)
         handleDomDisplayGhostEatabletimer()
         ghostReleaseCountdownActive = false
       }
