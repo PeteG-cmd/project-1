@@ -79,8 +79,9 @@ function main() {
 
     startGameButton.addEventListener('click', () => {
 
+      playSound('beginning')
       playerName = document.querySelector('#playerName').value
-   
+
       scores.map((element) => {
         if (element.currentPlayer === true) {
           element.currentPlayer = false
@@ -98,6 +99,18 @@ function main() {
       handleGameInterval('newLevel')
 
     })
+
+    //Handle Sounds
+
+    const audio = document.querySelector('#sound')
+
+    function playSound(sound) {
+      audio.pause()
+      audio.currentTime = 0
+      audio.src = 'sounds/pacman_' + sound + '.wav'
+      audio.play()
+    }
+
 
     //INITIALISE SCORE BOARD
 
@@ -333,7 +346,7 @@ function main() {
 
       }
       setAvailableDirections() {
-        
+
         if ((!(wallCells.includes(this.currentCell + 1))) && this.directionMoving !== 4) {
           this.availableDirections.push(this.currentCell + 1)
         }
@@ -584,7 +597,9 @@ function main() {
       if (cells[cellNum].classList.contains('food')) {
         cells[cellNum].classList.remove('food')
         score += 10
-        // scorep.innerHTML = score
+        // if (score % 20 === 0) {
+        playSound('eatfruit')
+        // }
         updateCurrentScorePanel()
       }
     }
@@ -600,6 +615,7 @@ function main() {
 
         cells[cellNum].classList.remove('superFoodMissile')
         playerMissiles += 2
+        playSound('chomp')
         handleDomDisplayMissileCount()
       }
     }
@@ -733,6 +749,7 @@ function main() {
 
       if (cells[cellNum].classList.contains('superFoodEatable')) {
         cells[cellNum].classList.remove('superFoodEatable')
+        playSound('chomp')
         checkIfEatablePeriodAlreadyActive()
         clearTimeout(ghostReleaseTimer)
         ghostReleaseCountdownActive = true //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
@@ -782,6 +799,7 @@ function main() {
 
           eatenGhosts.push(element.name)
           score += 100
+          playSound('eatghost')
           // scorep.innerHTML = score
           cells[element.currentCell].classList.remove(element.removeAllGhostClasses())
 
@@ -840,6 +858,7 @@ function main() {
 
         // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH OF LENGTH 1 ,2, 3 etc, UNTIL IT FINDS THE TARGET
 
+
         if (!(wallCells.includes(checkCell.cellNumber + 1)) && (!(checkCell.path.includes(checkCell.cellNumber + 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
           checkCell.path.push(checkCell.cellNumber + 1)
           const newPath = checkCell.path.slice()
@@ -847,6 +866,9 @@ function main() {
           checkCell.path.pop()
           // console.log('Checking right')
         }
+
+
+
         if (!(wallCells.includes(checkCell.cellNumber - 1)) && (!(checkCell.path.includes(checkCell.cellNumber - 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
 
           checkCell.path.push(checkCell.cellNumber - 1)
@@ -884,19 +906,16 @@ function main() {
         }
 
         cells[cellNum].classList.remove('superFoodFreeze')
+        playSound('chomp')
 
         clearTimeout(ghostReleaseTimer)
         ghostReleaseCountdownActive = true
-        // ghostPenCellsLocked()
-
 
         if (ghostPenCellsFull() && playerIsHunter === false) {
           ghostReleaseCountdownActive = false
-          // ghostPenCellsUnLocked()
         }
 
         score += 50
-        // scorep.innerHTML = score
         ghostsAreFrozen = true
         handleDomDisplayGhostFreezeTimer()
 
@@ -1035,6 +1054,7 @@ function main() {
 
         handleDomDisplayPlayerSpeedTimer()
         cells[cellNum].classList.remove('superFoodSpeed')
+        playSound('chomp')
 
 
 
@@ -1077,6 +1097,7 @@ function main() {
         ghosts.map((element) => {
           if (cells[dude].classList.contains(element.name) || (doesCellContainDude(element.cellJustLeft))) {
 
+            playSound('death')
             removeGhostsFromGame()
             removeAllPlayerClasses()
 
@@ -1197,8 +1218,7 @@ function main() {
         chanceOfGhostMovingSmartly += 4
         searchWidth += 1
         playerMissiles = 0
-
-        // removeEatenGhostsOnPathFromMap()
+        handleDomDisplayMissileCount()
         removeRandomSuperFood(1)
         removeGhostsFromGame()
         movePlayerToStartingLocation()
@@ -1403,11 +1423,14 @@ function main() {
       mainGameScreen.style.display = 'none'
       gameCountdownScreen.style.display = 'flex'
 
-      let i = 7
+      let i = 6
 
       const gameStartingInterval = setInterval(() => {
         i--
 
+        if (score > 0 && i === 5) {
+          playSound('intermission')
+        }
         if (interval === 'gameOver') {
           countDownTextDisplay.innerHTML = 'GAME OVER. <br><br> YOU SCORED: ' + score
         } else if (interval === 'gameWon') {
@@ -1418,7 +1441,7 @@ function main() {
             countDownTextDisplay.innerHTML = 'LEVEL ' + level + '. GET READY...'
             // countDownTextDisplay.innerHTML += '<br><br><br> 1 x SUPERFOOD REMOVED'
             // countDownTextDisplay.innerHTML += '<br><br> GHOST INTELIGENCE INCREASED'
-            if (level === 3 && i === 6) {
+            if (level === 3 && i === 5) {
               lives++
             }
             if (level === 3 && i > 3) {
