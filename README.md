@@ -3,51 +3,51 @@
 
 ## Overview
 
-PAC-DUDE is my first ever front-end development project, produced as part of General Assembly's Immersive Software Engineering Bootcamp.
+PAC-DUDE is my first front-end development project, produced as part of General Assembly's Immersive Software Engineering Bootcamp.
 
 My task was to create a grid-based game rendered in the browser that utilised 'vanilla' JavaScript, HTML and CSS.
 
-Given a selection of classic arcade games to choose from, I opted to build my take on PAC-MAN. The theme was inspired by last project for my current employer, which was to produce the new 'innocent +' range of drinks.
+Given a selection of classic arcade games to choose from, I chose to build my take on PAC-MAN. The theme was inspired by last project for my current employer, which was to produce the new 'innocent +' range of drinks.
 
-The project was mainly to consolidate my beginners' knowledge of JavaScript and interacting with the DOM, but I worked hard to make the game workable and to achieve the correct level of difficulty to make it challenging, but not impossible for the player to complete all 5 levels.
+The project was mainly to consolidate my beginners' knowledge of JavaScript and interacting with the DOM, but it was very important to make the game workable and to achieve the correct level of difficulty to make it challenging, but not impossible for the player to complete all 5 levels.
 
 You can play the game [here](https://peteg-cmd.github.io/project-1/)
 
 ## The Brief
 
-Render a game in the browser
-Design logic for winning & visually display which player won
-Include separate HTML / CSS / JavaScript files
-Stick with KISS (Keep It Simple Stupid) and DRY (Don't Repeat Yourself) principles
-Use Javascript for DOM manipulation
-Deploy your game online, where the rest of the world can access it
-Use semantic markup for HTML and CSS (adhere to best practices)
+* Render a game in the browser
+* Design logic for winning & visually display which player won
+* Include separate HTML / CSS / JavaScript files
+* Stick with KISS (Keep It Simple Stupid) and DRY (Don't Repeat Yourself) principles
+* Use Javascript for DOM manipulation
+* Deploy your game online, where the rest of the world can access it
+* Use semantic markup for HTML and CSS (adhere to best practices)
 
-##The Technologies used
+## The Technologies used
 
-HTML5
-CSS3
-JavaScript (ES6)
-Git and GitHub
-Google Fonts
-Adobe Illustrator
+* HTML5
+* CSS3
+* JavaScript (ES6)
+* Git and GitHub
+* Google Fonts
+* Adobe Illustrator 
 
 
-##The Approach
+## The Approach
 
-The Grid
 
-The game is built using a grid. A 20 x 20 square is created using JavaScript. HTML divs are created using a for loop and appended as children of the grid. The differant classes of cells are added and all cells pushed to an array.
+The game is built using a grid. A 20 x 20 square is created using JavaScript. HTML divs are created using a for loop and appended as children of the grid. The different classes of cells are added and all cells pushed to an array.
 
 
 
     for (let i = 0; i < gridCellCount; i++) {
       const cell = document.createElement('div')
       cell.classList.add('cell')
-      // cell.innerHTML = i // REMOVE ONCE FINISHED WITH NUMBERS
+
       if (i === dude) {
         cell.classList.add('dude-right')
       }
+
       if (!(noFoodCells.includes(i)) && (!(wallCells.includes(i)))) {
         cell.classList.add('food')
       }
@@ -67,6 +67,11 @@ The game is built using a grid. A 20 x 20 square is created using JavaScript. HT
         cell.classList.add('superFoodSpeed')
       }
 
+      if (isASuperFoodMissileCell(i)) {
+        cell.classList.remove('food')
+        cell.classList.add('superFoodMissile')
+      }
+
       wallCells.filter((element) => {
         if (element === i) {
           cell.classList.add('wall')
@@ -80,186 +85,419 @@ The game is built using a grid. A 20 x 20 square is created using JavaScript. HT
 
       grid.appendChild(cell)
       cells.push(cell)
+
     }
 
-During gameplay the grid is not visible, but is highlighted for demonstration porposes:
+A series of functions then control creating and releasing new ghosts in to the game as needed:
+
+    //FUNCTION TO CREATE A NEW GHOST, GIVING IT THE CELL TO START IN IN THE 'GHOST HOLDING PEN'
+
+    function createGhost(startingCell) {
+
+      ghosts.push(new Ghost(`ghost${ghosts.length + 1}`, startingCell))
+      cells[startingCell].classList.add(ghosts[ghosts.length - 1].name)
+      ghostPenOccupied.push(startingCell)
+      
+    }
+
+    function flashPenGateGreen(gateNumber) {
+      cells[gateNumber].classList.remove('cellGate')
+      cells[gateNumber].classList.add('cellGateOpen')
+      setTimeout(() => {
+        cells[gateNumber].classList.remove('cellGateOpen')
+        cells[gateNumber].classList.add('cellGate')
+      }, 700)
+    }
+
+   
+    function releaseGhosts() {
+      if (ghostReleaseCountdownActive === false) {
+        ghostReleaseCountdownActive = true
+        startGhostReleaseTimer()
+      }
+    }
+
+During gameplay the grid is not visible, but is highlighted for demonstration purposes:
+
+<img src='screenshots/grid-comparison.png'>
+
+The game start scree the user sees is as below:
+
+<img src='screenshots/pac-dude-start.png'>
 
 
 
+## Gameplay
+
+The game is simple and follows the same basic principles of the original PACMAN game, with a few additional functions. In addition to the classic super food that allows the player to chase and eat the ghosts, there are three additional super foods, which are detailed below.
+
+1: 'EAT' - Allows the player to become the hunter, and chase and eat the Ghosts, sending them back to the starting pen if they are caught.
+
+2: 'FREEZE' - Allows the player to freeze the ghosts in their current locations for a set period of time.
+
+3: 'SPEED' - Increases the speed of the player to 1.4x for a set period of time.
+
+4: 'SHOOT' - When this super food is eaten, the player gains two missiles which can be shot straight in any valid direction, and will 'kill' the the Ghosts and send them back to the starting pen if they are hit.
 
 
+During the first 2 super food periods (Eat and Freeze), ghosts which are in (Or returned to) their starting pen will not be released until the period is over. This is signified to the player through a colour scheme for the 'gates', which are turned red when they are locked.
 
+The amount of time and the amount of missiles the player has for each superfood period are displayed on the right hand side of the screen so the player can easily see the current status of the game, as can be seen (highlighted red) in the screenshot below, showing the 'Eat' superfood period being active.
 
-Decription - Basic themed version of classic PAC-MAN game.
+<img src='screenshots/pac-dude-timer-example.png'>
 
-A simple game written in JavaScript which should be able to run in all modern
-browsers. The aim behind this project was to increase and deepen my knowledge of JS and its ability to make grid based games which run onl;y on the client side. The theme was taken from my current employers and uses the new 'innocent +' range of drinks as the food and super food.
+An example showing each of the other superfood periods active is below.
 
+FREEZE
 
-GAMEPLAY
+<img src='screenshots/pac-dude-frozen.png'>
 
-The game is simple and follows the same basic principles of the original PACMAN game, with a few additional functions. In addition to the classic super food that allows the player to chase and eat the ghosts, there are two additional super foods. The first freezes the ghosts in their current locations for a set period of time, and the second increases the speed the playes can move at to 1.5X for a set period. 
+SPEED
 
-During the first 2 super food periods (Freeze and Hunt), ghosts which are in their starting pen will not be released until the period is over. 
+<img src='screenshots/pac-dude-speed.png'>
 
+MISSILE
 
-LEVELS AND DIFFICULTY
+<img src='screenshots/pac-dude-missile.png'>
 
-Once the player has eaten all the food and superfood the level ends and a message to the player is displayed showing the level and the score. There are 5 levels in total. Each level uses the same map, however as levels increase there are 2 changes made to increase difficulty. The first is that the amount of super food is reduced. The second is that the inteligence of the ghosts is gradually incresed. In each subsequent level the ghosts expand their search area by 2 (the amount of cells from themselves they check to locate the player), and once they have found and are tracking the player, with each level their ability to continue tracking the player increases. This starts with them making the correct choices 76% of the time, and increase by 4% with each level completed - meaning in level 5 the ghosts have a 96% chance of tracking the player correctly.
+<img src='screenshots/pac-dude-missile-exp.png'>
 
+## MOVEMENT OF GAME ELEMENTS
 
-SCORING
+In order to move the experience for the user away from a 'grid based game', and towards more of an arcade experience I used a series of simple animations to ensure the player and the 'ghosts' move smoothly and at the correct interval speed. An example of these animations can be seen below:
 
-The player earns 10 points for each bit of food eaten, 50 points for eating a superfood, and 100 points for eating a ghost.
+	.animate-ghost-left {
+	  animation: move-ghost-left 0.35s linear;
+	}
+	
+	@keyframes move-ghost-left {
+	  0% {
+	    transform: translate(100%, 0);
+	  }
+	  100% {
+	    transform: translate(0);
+	  }
+	}
+	
+The only element of the 'superfoods' that also required animations was firing a missile, with the same principle used, but at an increased interval speed of 0.1s.
+
+	.animate-missile-up {
+	  animation: move-missile-up 0.1s linear;
+	}
+	
+	@keyframes move-missile-up {
+	  0% {
+	    transform: translate(0, 100%);
+	  }
+	  100% {
+	    transform: translate(0);
+	  }
+	}
+
+## SCORING
+
+The player earns 10 points for each bit of food eaten, 50 points for eating a superfood, and 100 points for eating a ghost. 100 points are also awarded if a ghost is hit and killed with a missile.
 
 The scores are kept track of live and the leader board shown and updated on the left side of the screen during gameplay. The scores are persisted using local storage if available.
 
-
-CHALLENGES
-
-During this project their were 2 main challenges to get the game running as designed.
-
-1: The first was to give the ghosts the correct level of inteligence to make the game challenging, whilst also balancing this with the perfomance ability of most modern laptops. At first the search width of the ghosts was unrestricted, however the calculation time needed was increasing the interval which controlled the ghost as so many calculations were needed. The trade off here was limit the search width of the ghost to below approx 15 cells, and if they could not find the player within this width they will move randomly (but will never reverse direction). In the end i was happy with this decision and actually think that it leads to a better game play experience as the ghost do not continually home in on the player, but tracking must be triggered by distance.
-
-2: The implementation of multiple 'Super Food Periods' that can overlap was a challenge to get running correctly. 
+The player starts the game with 4 lives, and if the game continues to level 3, then an additional life is awarded.
 
 
 
+## LEVELS AND DIFFICULTY
+
+Once the player has eaten all the food and superfood the level ends and a message to the player is displayed showing the level and the score. 
+
+There are 5 levels in total. Each level uses the same map, however as levels increase there are 2 changes made to increase difficulty. The first is that the amount of super food is reduced, and randomly selected superfoods are removed. The second is that the intelligence of the ghosts is gradually increased. 
+
+In each subsequent level the ghosts expand their search area by 2 (the amount of cells from themselves they check to locate the player), and once they have found and are tracking the player, with each level their ability to continue tracking the player increases. This starts with them making the correct choices 76% of the time, and increase by 4% with each level completed - meaning in level 5 the ghosts have a 96% chance of tracking the player correctly.
 
 
 
-Pac - man (Pac - Dude)
+## GHOST MOVEMENT AND INTELLIGENCE
 
-Be a 20 x 20 grid?
-Should walls be full squarwes, or borders of squares
-Speed initially set at one speed
-3 x levels, with increasing difficulty
-Scores updeated live as player plays
+One of the most challenging aspects of creating this game was to get the Ghosts to move in an intelligent way to make the game challenging for the player, and to be able to slowly increase the level of their intelligence to increase the difficulty as the levels increased.
 
+In order to achieve this I wrote a Breadth-first search algorithm that searched for the shortest path to the player at each game interval (0.35s). Initially this algorithm searches 8 cells in every direction, and if the target is not found the ghost moves randomly, but never back on itself. This search radius is increased by 2 cells every time the level increases. In order to give the player a chance to escape the ghosts, there is also an element of chance added in which gives the ghost a certain % chance of making the correct choice every time it runs the search. Initially it will make the correct choice 70% of the time, and this increases by 4% every level, until in level 5 the Ghosts track the player correctly 90% of the times they are given the choice to do so.
 
-  PACMAN
-    - Always starts in the same location
-    - Continues to move in the same direction as the last one specified by the player, until a wall is hit, or the player change it
-    - Killed & game over if caught by a ghost
-    - Able to eat ghost for XXX seconds if eaten a superfood
-    - Has 5 lives
-    - Can have classes HUNTER & HUNTED (should change color between the 2)
-
-  GHOSTS
-    - Start in a holding Pen and are relesed one after another
-    - Move generally towards player
-    - Move generally away from player if a SUPERFOOD has been eaten
-    - If gets eaten, returns to pen for X seconds and is re-released
-    - Can have classes HUNTER AND HUNTED (Should change color between the 2)
-
-  MAP
-    - Generated on startup with walls pre set
-    - Ideally 20 x 20 so the speed of the game can be quite fast
-    - Each grid will be able to have several classes:
-        - Wall
-        - Map
-        - Food
-        - Superfood
-        - Ghost
-        - Player
-        - **Explosion (or something)* if the ghost catches the player
-    - In the later levels the superfoods could be randomly positioned?
-
-  GAMEPLAY
-    - Game has a 3 second countdown to start after button is pressed
-    - Game starts with player and First Ghost at same time
-    - Score is updated each interval and displayed on thew page
-    - If player completes it some sort of Alert/animation should show
-    - 2 or 3 levels of increasing difficult
-
-
-DRAW OUT WHAT THE MAP WILL LOOK LIKE ON A PIECE OF PAPER AND CALCULATE GRID SIZE
+To handle all the ghost movement and logic, I created a Ghost class and a Location class, for which the code can be seen below. This is a fairly chunky code snip, however i wanted to show it as this class controls all the logic associated with the ghosts, and enables the game to create and release as many ghosts as needed. 
 
 
 
-Create Map
-      - Physically draw out map so I know what its going to look like
-            - This should include index ID's of cells which are 'map' and 'wall'
-            - Create and array containg the numbers of the 'walls'
-      - create outer border in HTML (Or JS)
-      - Create limited style of divs and border in CSS to get the basic map started, and set required flex properties
-      - create JS to create required Divs (Create elements and append children)
-      - add cells to an array as they are created
-      - Map should include 'crossover' to allow pacman to move to the other side
-            - Pacman should appear on the same row when travelling through it (Implement in movement rules stage)
+	 class Location {
 
-      - Create an array so I can tell the created blocks (Probably as they are created if they are 'map' or 'wall')
-      - This array could also be utilised in the movement logic
+      constructor(cellNumber, path) {
+        this.cellNumber = cellNumber
+        this.path = path
+      }
+    }
 
-      HAVE CREATED MAP THAT LOOKS AS IT SHOULD
+    class Ghost {
 
-Create Pac man and movement rules
-      - Create js variable and CSS to show starting position of Pac-man
-      - Create event listeners for KEYS ONLY
-      - Create logic for rules as to how player can move (Think about Math)
-            - If a wall is left, cannot move left
-            - If a wall is above, cannot move up
-            - ETC
-            - Put some thought in to how to structure this as could re-use for ghosts?
+      constructor(name, currentCell) {
+        this.name = name
+        this.ghostClass = name
+        this.currentCell = currentCell
+        this.directionMoving
+        this.availableDirections = []
+        this.cellOnPath
+        this.cellJustLeft = currentCell
 
-            - The Array that tells the map where the walls are could also be utilised in this movment step
-                  - For example if the index number of the cell is INCLUDES in the Array, then cant move in that direction
+      }
+      setAvailableDirections() {
 
-      PACMAN CAN MOVE AROUND MAP CORRECTLY
+        if ((!(wallCells.includes(this.currentCell + 1))) && this.directionMoving !== 4) {
+          this.availableDirections.push(this.currentCell + 1)
+        }
+        if ((!(wallCells.includes(this.currentCell - 1))) && this.directionMoving !== 2) {
+          this.availableDirections.push(this.currentCell - 1)
+        }
+        if ((!(wallCells.includes(this.currentCell + width))) && this.directionMoving !== 1) {
+          this.availableDirections.push(this.currentCell + width)
+        }
+        if ((!(wallCells.includes(this.currentCell - width))) && this.directionMoving !== 3) {
+          this.availableDirections.push(this.currentCell - width)
+        }
+        return
+      }
 
-Create single ghost
-      - Create the first ghost in its starting position
-      - Create logic for how it can move
-            - At each intersection it randomly picks a direc tion to move
-            - Think more about this
-            - Maybe a function which calculates avalable movement directions, and if this is more than 1 at any interval, then a random number is used to pick which way it goes
+      moveGhost() {
 
-      - Create interval to allow it to know how fast it can move
+        // THIS REMOVES THE GHOST FROM EVALUATION IF IT HAS BEEN EATEN
 
-      A GHOST IS ABLE TO MOVE AROUND THE MAP
+        if (!(eatenGhosts.includes(this.name))) { 
 
-Create remainimg ghosts
-      - Create remaining ghosts and apply same logic for movement
-      - Use same interval
-      - Apply logic for when they can release from starting Pen after start of game
+          // THE FOLLOWING 2 X IF ELSE HANDLE IF THE GHOST GOES THROUGH THE TRANSPORT TUNNEL
 
-      HAVE $ GHOSTS AND PLAYER THAT CAN MOVE AROUND THE MAP
+          if (this.currentCell === 219 && this.directionMoving === 2) {
+            this.removeAllGhostClasses()
+            this.cellJustLeft = this.currentCell
+            this.currentCell -= (width - 1)
+            cells[this.currentCell].classList.add(this.ghostClass)
 
-Add player in to interval loop (Or new loop?)
-      - Move the code so that the player and the ghosts are moving at the allowed speed
-      - Create logic and CSS for what happens to end a game - ie. player is caught
+          } else if (this.currentCell === 200 && this.directionMoving === 4) {
+            this.removeAllGhostClasses()
+            this.cellJustLeft = this.currentCell
+            this.currentCell += (width - 1)
+            cells[this.currentCell].classList.add(this.ghostClass)
 
-      GAME RUNS AT CORRECT SPEED AND ABLE TO END
+          } else if (!(ghostPenCells.includes(this.currentCell))) {
 
-Add food and score logic
-      - Add classes and initialization rules for where the food shoiuld be
-      - Add logic so player can eat food, and score increases
-            - This can be done by checking the classes applied to each div, and then to increase the score and remove the food
-      - Add logic for player to win game if all food is eaten
-            - This could be done by counting the GridSquares that have class of Food (ie. if it === 0 then the player wins)
+            // THIS IF STATEMENT CHECKS IF THE GHOST SHOULD MOVE ON THE PATH OR RANDOMLY IF PATH NOT KNOWN. IT ALSO STOPS THE GHOST MOVING ON THE PATH IF THE PLAYER IS THE HUNTER
 
-      PLAYER ABLE TO EAT FOOD, INCREASE SCORE & WIN
+            if (this.cellOnPath !== '' && this.willFindCellOnPath() === true && playerIsHunter === false) { 
 
-Limited CSS and other styling to make it look better
-      - Get final resources needed for theming
-      - add pictures, colors, background colors & animation as needed
-      - Dont go mad for the moment but should look ok
+              // THIS IS NEEDED SO THE GHOST DIRECTION IS STILL SET EVEN IF MOVING ON PATH
+
+              this.directionMoving = this.findDirectionMoving(this.currentCell, this.cellOnPath)
+              this.removeAllGhostClasses()
+              this.cellJustLeft = this.currentCell
+              this.currentCell = this.cellOnPath
+              this.cellOnPath = ''
+              cells[this.currentCell].classList.add(this.ghostClass)
+              this.addGhostAnimationClassNeeded()
+              this.availableDirections = []
+
+            } else {
+
+              // THIS PICKS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT IF NO TARGET PATH AVAILABLE
+
+              const nextCellGhost = Math.floor((Math.random()) * this.availableDirections.length)
+
+              this.directionMoving = this.findDirectionMoving(this.currentCell, this.availableDirections[parseInt(nextCellGhost)])
+
+              // cells[this.currentCell].classList.remove(this.ghostClass)
+              this.removeAllGhostClasses()
+              this.cellJustLeft = this.currentCell
+              this.currentCell = this.availableDirections[parseInt(nextCellGhost)]
+              this.cellOnPath = '' // THIS IS NEEDED AS IF BY CHANCE THE GHOST STOPS FOLLOWING THE PATH, I NEED TO ERASE THE PATH FOR THE GHOST TO FIND AGAIN
+              cells[this.currentCell].classList.add(this.ghostClass)
+              this.addGhostAnimationClassNeeded()
+              this.availableDirections = []
+            }
+          }
+        }
+      }
+
+      addGhostAnimationClassNeeded() {
+        if (this.directionMoving === 1) {
+          cells[this.currentCell].classList.add('animate-ghost-up')
+        }
+        if (this.directionMoving === 2) {
+          cells[this.currentCell].classList.add('animate-ghost-right')
+        }
+        if (this.directionMoving === 3) {
+          cells[this.currentCell].classList.add('animate-ghost-down')
+        }
+        if (this.directionMoving === 4) {
+          cells[this.currentCell].classList.add('animate-ghost-left')
+        }
+      }
+
+      removeAllGhostClasses() {
+        cells[this.currentCell].classList.remove(this.ghostClass)
+        cells[this.currentCell].classList.remove('animate-ghost-down')
+        cells[this.currentCell].classList.remove('animate-ghost-right')
+        cells[this.currentCell].classList.remove('animate-ghost-left')
+        cells[this.currentCell].classList.remove('animate-ghost-up')
+        cells[this.currentCell].classList.remove('eatableBlue')
+        cells[this.currentCell].classList.remove('freezeBlue')
+
+      }
+
+      findDirectionMoving(currentCell, newCell) {
+        if (newCell - currentCell === 1 || newCell - currentCell === (width - 38)) { // The additional 'or' sets the direction as moving through the tunnel
+          return 2
+        }
+        if (newCell - currentCell === -1 || newCell - currentCell === (width - 1)) {
+          return 4
+        }
+        if (newCell - currentCell === -(width)) {
+          return 1
+        }
+        if (newCell - currentCell === width) {
+          return 3
+        }
+      }
+
+      // THIS IS TO SET THE % CHANCE THAT, WHEN A TARGET IS AVAILABLE AND A MAP INTERSECTION FOUND, THAT THE CORRECT CHOICE IS MADE. REQUIRED FOR MORE ENJOYABLE GAMEPLAY
+
+      willFindCellOnPath() {
+        const num = Math.floor((Math.random() * 100))
+        if (num < chanceOfGhostMovingSmartly) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+      findNextCellOnPath() {
+        // PERFORMANCE NOTES - THE SEARCH WIDTH MUST BE CONSTRAINED IN THIS ALGORITHM TO MAINTAIN PERFORMANCE ON A STANDARD LAPTOP/DESKTOP
+
+        if (!(eatenGhosts.includes(this.name))) { // THIS REMOVES THE GHOST FROM EVALUATION IF IT HAS BEEN EATEN
+
+          //CHECK THERE IS A CHOICE TO MAKE (OTHERWISE DO NOT EXECUTE SEARCH)
+
+          if (this.availableDirections.length > 1) {
+            const queue = []
+            const target = dude
+
+            // START SEARCH
+
+            queue.push(new Location(this.currentCell, [this.currentCell]))
+            let pathNotFound = true
+
+            while (pathNotFound) {
+              const checkCell = queue.shift()
+
+              // THESE NEXT 2 IFS HANDLE IF THE TARGET (dude) IS WITHIN AN XXX CELL PATH AND HANDLES WEATHER TO SET THE NEXT CELL ON THE GHOST PATH, OR IF TO SET IT TO AN EMPTY STRING
+
+              if (checkCell.path.length > searchWidth - 1) {
+                pathNotFound = false
+                this.cellOnPath = ''
+              }
+
+              //IF THE PLAYER IS FOUND PASS BACK THE NEXT CELL NEEDED FOR EFFECTIVE TRACKING
+
+              if (checkCell.cellNumber === target) {
+                pathNotFound = false
+                this.cellOnPath = checkCell.path[1]
+              }
+
+              // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH UP TO THE LENGTH OF SEARCH SPECIFIED BY THE LEVEL, CHECKING IN EACH POSSIBLE DIRECTION
+
+              directionsCount.map((directionCount) => {
+
+                if (!(wallCells.includes(checkCell.cellNumber + directionCount)) && (!(checkCell.path.includes(checkCell.cellNumber + directionCount))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
+                  checkCell.path.push(checkCell.cellNumber + directionCount)
+                  const newPath = checkCell.path.slice()
+                  queue.push(new Location(checkCell.cellNumber + directionCount, newPath))
+                  checkCell.path.pop()
+                }
+              })
+            }
+          }
+        }
+      }
+    }
 
 
 
+## CHALLENGES
 
-/////////
+During this project there were 2 main challenges to get the game running as designed.
 
-Add 'superfood' initialization and classes
-      - Add new class of super food
-      - Add ability for 'HUNTER' to become 'HUNTED'
-      - If ghost is eaten, destroy this ghost, increase score and 'respawn' ghost to release after XXX seconds
+1: The first was to give the ghosts the correct level of intelligence to make the game challenging, whilst also balancing this with the performance ability of most modern laptops. At first the search width of the ghosts was unrestricted, however the calculation time needed was increasing the interval which controlled the ghost as so many calculations were needed. The trade off here was limit the search width of the ghost to below 15 cells, and if they could not find the player within this width they will move randomly (but will never reverse direction). In the end I was happy with this decision and actually think that it leads to a better game play experience as the ghost do not continually home in on the player and tracking must be triggered by distance.
 
-      SUPER FOOD WORKS
+This issue also drove me to implement another control on triggering the search, which I had not considered originally. The 'ghosts' also run a function before executing the search to check if there is more than one direction available to them. Since they cannot move back on themselves, they only need to execute the search approximately one in every four moves, so adding this simple function reduced the number of searches needed by around 4x, and really helped with the performance issues. This game will now easily run on most computers.
 
-Increase inteligence of Ghosts
-      - Use improved mathamatical logic to move the ghosts in a more inteligent way
-      - For level 2 this could be using Pythagorean theorem???
+2: The second major challenge was the implementation of multiple 'Super Food Periods' that can overlap and be active concurrently.
 
-      - If there is another level is there a way to make the ghosts calculate and use always the shortewst path to the player???
-      PATHFINDING (A* MAy help)
+The challenge here came from the fact that the game behaves slightly differently depending on which superfood is active, and must handle these together. For the 'Speed' superfood, the player interval speed is also removed from the game interval, and temporarily moved to its own slightly quicker interval speed. To handle these issues I created some global variables to keep track of certain elements, which could be controlled by any of the intervals of superfood functions. This ensured that things like the ghosts being released or returned to the pen if eaten were handled correctly regardless of which or how many superfood periods were active.
+
+An example of the code handling the 'Eat' superfood, and some of the function checks it makes is below:
+
+	 function removeSuperFoodActivateChase(cellNum) {
+	// CHECK WHEN A SUPER FOOD IS EATEN
+	      if (cells[cellNum].classList.contains('superFoodEatable')) {
+	        cells[cellNum].classList.remove('superFoodEatable')
+	        playSound('chomp')
+	        checkIfEatablePeriodAlreadyActive()
+	        clearTimeout(ghostReleaseTimer)
+	        ghostReleaseCountdownActive = true //// THIS LINE AND THE LINE ABOVE ENSURE GHOSTS ARE NOT RELEASE UNTIL THE 'EATABLE' PERIOD IS OVER (10 SECONDS)
+	        score += 50
+	        playerIsHunter = true
+	        handleDomDisplayGhostEatabletimer()
+	        setGhostsToEatable()
+	        startGhostEatableTimeOut()
+	      }
+	      returnGhostToPenIfEaten()
+	    }
+	    
+	    //CHECK THAT THE A CURRENT EATABLE PERIOS IS NOT ALREADY ACTIVE
+	
+	    function checkIfEatablePeriodAlreadyActive() {
+	      if (((ghosts.some((element) => element.ghostClass === 'eatableBlue')))) { //// THERE IS PROBABLY AN EDGE CASE TO DO WITH THE TIMER HERE THAT NEEDS TO BE SORTED. IF ALL GHOST ARE EATEN DO WE NEED TO HANDLE THE TIMER
+	        clearTimeout(ghostEatableTimer)
+	      }
+	    }
+	
+	//CHANGE THE GHOST CLASS TO EATABLE IF THEY ARE NOT IN THE HOLDING PEN
+	    function setGhostsToEatable() {
+	      ghosts.map((element) => {
+	        if (!(ghostPenOccupied.includes(element.currentCell))) {
+	          cells[element.currentCell].classList.remove(element.name)
+	          cells[element.currentCell].classList.add('eatableBlue')
+	          element.ghostClass = 'eatableBlue'
+	        }
+	      })
+	    }
+	//START THE TIMER AND PAUSE THE GHOST RELEASE TIMER
+	    function startGhostEatableTimeOut() {
+	      ghostEatableTimer = setTimeout(() => {
+	        playerIsHunter = false
+	        ghosts.map((element) => {
+	          cells[element.currentCell].classList.remove('eatableBlue')
+	          element.ghostClass = element.name
+	          cells[element.currentCell].classList.add(element.name)
+	          ghostReleaseCountdownActive = false
+	        })
+	      }, timeGhostsRemainEatable * 1000)
+	    }
+	
+
+## POTENTIAL FUTURE FEATURES
+
+The next step for this project is to create new maps for each level. Originally I had planned to do this but as the deadline for submission loomed I had to de-prioritise this to ensure other functionality was working properly. I do think it would be a better experience for the user though to have at least one or two other maps to play.
+
+Another feature that I would like to implement would be to have the ghosts actively avoid the player during the 'eat' superfood period. Currently they only stop tracking the player, but i think it would be more interesting if they smartly avoided the player.
+
+
+## LESSONS LEARNED
+
+Naming. This was a hard lesson learnt, and as I moved through the game my name conventions and practices did improve, however I did run in to challenges at times from giving functions or elements names that were not specific enough, or that were too close to other names.
+
+Design mobile first. This game does not work on mobile, and I wish I had given more consideration to this at the start. If i have time in future I may go back and adapt it, but this would have been easier if i had planned for it properly.
+
+
+

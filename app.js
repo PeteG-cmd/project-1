@@ -2,6 +2,7 @@
 function main() {
 
   launchGame()
+
   function launchGame() {
 
     //SET UP VARIABLES NEEDED
@@ -51,7 +52,6 @@ function main() {
     let missileIsActive = false
     const directionsCount = [width, -width, 1, -1]
 
-
     const wallCells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 29, 30, 39, 40, 42, 43, 45, 46, 47, 49, 50, 52, 53, 54, 56, 57, 59, 60, 62, 63, 65, 66, 67, 69, 70, 72, 73, 74, 76, 77, 79, 80, 99, 100, 102, 103, 105, 107, 108, 109, 110, 111, 112, 114, 116, 117, 119, 120, 125, 129, 130, 134, 139, 140, 141, 142, 143, 145, 146, 147, 149, 150, 152, 153, 154, 156, 157, 158, 159, 163, 165, 174, 176, 177, 178, 179, 180, 181, 182, 183, 185, 187, 188, 189, 190, 191, 192, 194, 196, 197, 198, 199, 207, 212, 220, 221, 222, 223, 225, 227, 228, 229, 230, 231, 232, 234, 236, 237, 238, 239, 240, 245, 254, 259, 260, 262, 263, 265, 267, 268, 269, 270, 271, 272, 274, 276, 277, 279, 280, 283, 296, 299, 300, 301, 303, 303, 305, 306, 307, 309, 310, 312, 313, 314, 316, 318, 319, 320, 325, 329, 330, 334, 339, 340, 342, 343, 345, 347, 349, 350, 352, 354, 356, 357, 359, 360, 367, 372, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399]
 
     const noFoodCells = [160, 161, 162, 166, 167, 168, 169, 170, 171, 172, 173, 200, 208, 209, 210, 211, 219, 246, 247, 248, 249, 250, 251, 252, 253]
@@ -100,7 +100,7 @@ function main() {
 
     })
 
-    //Handle Sounds
+    //HANDLE SOUNDS
 
     const audio = document.querySelector('#sound')
 
@@ -111,8 +111,7 @@ function main() {
       audio.play()
     }
 
-
-    //INITIALISE SCORE BOARD
+    //INITIALISE SCORE BOARDS X 2 (May reduce to one)
 
     function initialiseScoreBoard() {
 
@@ -144,7 +143,6 @@ function main() {
           scoreBoard.appendChild(scorePanel)
         } else {
           scoreBoard2.appendChild(scorePanel)
-
         }
       }
     }
@@ -167,8 +165,6 @@ function main() {
       }
       initialiseScoreBoard()
     }
-
-
 
     function orderScoreBoard() {
       scores = scores.sort((element, element2) => element2.score - element.score)
@@ -197,7 +193,6 @@ function main() {
         const playerScores = JSON.parse(localStorage.getItem('playerScores'))
         if (playerScores) {
           scores = playerScores
-
         }
       }
       if (scores.length === 0) {
@@ -240,9 +235,6 @@ function main() {
       infoBoard.appendChild(infoPanel)
       infos.push(infoBoard)
     }
-
-
-
 
     //INITIALISE MAP
 
@@ -323,7 +315,6 @@ function main() {
       }
     }
 
-
     class Location {
 
       constructor(cellNumber, path) {
@@ -331,7 +322,6 @@ function main() {
         this.path = path
       }
     }
-
 
     class Ghost {
 
@@ -394,8 +384,6 @@ function main() {
               this.availableDirections = []
 
             } else {
-
-
               // THIS PICKS THE DIRECTION A GHOST SHOULD GO AT AN INTERSECTION AND IMPLEMENTS IT IF NO TARGET PATH AVAILABLE
 
               const nextCellGhost = Math.floor((Math.random()) * this.availableDirections.length)
@@ -517,7 +505,7 @@ function main() {
 
     document.addEventListener('keydown', (event) => {
 
-      //SETS THE PLAYER DIRECTION TO BE USED AT EACH INTERVAL
+      //SETS THE PLAYER DIRECTION TO BE USED AT EACH INTERVAL AND CHECKS IT IS CURRENTLY VALID BEFORE CHANGING
 
       if (event.key === 'ArrowRight' && rightPlayerMoveIsValid()) {
         playerDirection = 2
@@ -537,7 +525,7 @@ function main() {
       ghosts.push(new Ghost(`ghost${ghosts.length + 1}`, startingCell))
       cells[startingCell].classList.add(ghosts[ghosts.length - 1].name)
       ghostPenOccupied.push(startingCell)
-      console.log(ghosts)
+      
     }
 
     function flashPenGateGreen(gateNumber) {
@@ -565,7 +553,6 @@ function main() {
         }
         ghostPenOccupied.shift()
         ghostReleaseCountdownActive = false
-
       }, secondsBetweenGhostRelease * 1000)
     }
 
@@ -608,8 +595,6 @@ function main() {
       return ghostPenOccupied.length >= 4
     }
 
-
-
     function removeSuperFoodArmMissile(cellNum) {
       if (cells[cellNum].classList.contains('superFoodMissile')) {
 
@@ -619,7 +604,6 @@ function main() {
         handleDomDisplayMissileCount()
       }
     }
-
 
     function checkMissileCanFireOrContinue() {
       return (!(wallCells.includes(missile + missileDirection)))
@@ -742,9 +726,6 @@ function main() {
       })
     }
 
-
-
-
     function removeSuperFoodActivateChase(cellNum) {
 
       if (cells[cellNum].classList.contains('superFoodEatable')) {
@@ -790,12 +771,10 @@ function main() {
       }, timeGhostsRemainEatable * 1000)
     }
 
-
     function returnGhostToPenIfEaten() { // CHECK IF A GHOST IS EATEN AND REMOVE IT FROM THE ARRAY IF IT IS
       ghosts.map((element) => {
 
         if ((doesCellContainDude(element.currentCell)) || doesCellContainDude(element.cellJustLeft) && element.ghostClass === 'eatableBlue') {
-
 
           eatenGhosts.push(element.name)
           score += 100
@@ -814,7 +793,6 @@ function main() {
           element.cellJustLeft = element.currentCell
 
           sendEatanGhostOnPath(path, element.currentCell)
-
         }
       })
     }
@@ -858,7 +836,6 @@ function main() {
 
         // THIS CODE HANDLES FINDING EVERY POSSIBLE PATH OF LENGTH 1 ,2, 3 etc, UNTIL IT FINDS THE TARGET
 
-
         if (!(wallCells.includes(checkCell.cellNumber + 1)) && (!(checkCell.path.includes(checkCell.cellNumber + 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
           checkCell.path.push(checkCell.cellNumber + 1)
           const newPath = checkCell.path.slice()
@@ -866,8 +843,6 @@ function main() {
           checkCell.path.pop()
           // console.log('Checking right')
         }
-
-
 
         if (!(wallCells.includes(checkCell.cellNumber - 1)) && (!(checkCell.path.includes(checkCell.cellNumber - 1))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
 
@@ -886,6 +861,7 @@ function main() {
           checkCell.path.pop()
           // console.log('Checking down')
         }
+
         if (!(wallCells.includes(checkCell.cellNumber - width)) && (!(checkCell.path.includes(checkCell.cellNumber - width))) && (!(checkCell.path.includes(this.cellJustLeft)))) {
 
           checkCell.path.push(checkCell.cellNumber - width)
@@ -921,17 +897,14 @@ function main() {
 
         ghosts.map((element) => {
           if (!(ghostPenOccupied.includes(element.currentCell))) {
-            // element.pathNotFound = false //// THIS STOPS THE GHOSTS FREEZING AND AN ERROR BEING THROWN AS THE WHILE LOOP FOR FIND PATH IS NEVER EXITED
             cells[element.currentCell].classList.add('freezeBlue')
             element.cellJustLeft = 211 ////THIS MEANS AFTER THE GHOSTS ARE FROZEN THEY DONT GET STUCK AND 'FIND NEXT CELL ON PATH' CAN FIRE
-
           }
         })
 
         ghostFreezeTimer = setTimeout(() => {
           ghostsAreFrozen = false
           ghostReleaseCountdownActive = false
-          // ghostPenCellsUnLocked()
           ghosts.map((element) => {
             if (!(ghostPenOccupied.includes(element.currentCell))) {
               cells[element.currentCell].classList.remove('freezeBlue')
@@ -967,7 +940,6 @@ function main() {
 
       } else {
 
-
         ghostFreezeDisplayInterval = setInterval(() => {
           display.innerHTML = i.toFixed(2)
           display.style.fontSize = '130%'
@@ -979,7 +951,6 @@ function main() {
           }
         }, 100)
       }
-
     }
 
     function handleDomDisplayPlayerSpeedTimer() {
@@ -1024,7 +995,6 @@ function main() {
           }
         }, 100)
       }
-
     }
 
     function handleCellGateColor() {
@@ -1048,7 +1018,6 @@ function main() {
       display1.innerHTML = playerMissiles + ' x Missile'
     }
 
-
     function removeSuperFoodActivateSpeed(cellNum) {
       if (cells[cellNum].classList.contains('superFoodSpeed')) {
 
@@ -1056,14 +1025,11 @@ function main() {
         cells[cellNum].classList.remove('superFoodSpeed')
         playSound('chomp')
 
-
-
         clearInterval(intervalId2)
         startPlayerInterval(playerSpeed / 1.5)
         playerIsSpeedy = true
 
         score += 50
-        // scorep.innerHTML = score
 
         playerSpeedTimer = setTimeout(() => {
           playerIsSpeedy = false
@@ -1162,7 +1128,6 @@ function main() {
       cells[250].classList.add('dude-right')
     }
 
-
     function removeGhostsFromGame() {
       ghosts.map((element) => cells[element.currentCell].classList.remove(element.removeAllGhostClasses()))
 
@@ -1203,7 +1168,6 @@ function main() {
       levelDisplay.innerHTML = 'LEVEL ' + level
       infoPanel.appendChild(levelDisplay)
       infoBoard.appendChild(infoPanel)
-
     }
 
     function updateLevelDisplay() {
@@ -1236,7 +1200,7 @@ function main() {
     function goToScoreBoard() {
       localStoreScores()
       updateCurrentScorePanel()
-      location.reload()
+      location.reload() /// THIS RELOADS THE PAGE AND RESETS ALL FOR NEXT GAME
     }
 
     function resetGameBoard() {
@@ -1308,15 +1272,12 @@ function main() {
     function rightPlayerMoveIsValid() {
       return (!(wallCells.includes(dude + 1)))
     }
-
     function downPlayerMoveIsValid() {
       return (!(wallCells.includes(dude + width)))
     }
-
     function leftPlayerMoveIsValid() {
       return (!(wallCells.includes(dude - 1)))
     }
-
 
     function movePlayerUp() {
       if (wallCells.includes(dude - width)) {
@@ -1353,7 +1314,6 @@ function main() {
       } else {
         cells[dude].classList.add('animate-dude-right')
       }
-
     }
 
     function movePlayerDown() {
@@ -1391,8 +1351,6 @@ function main() {
         cells[dude].classList.add('animate-dude-left')
       }
     }
-
-
 
     function removeAllPlayerClasses() {
       cells[dude].classList.remove('dude-right')
@@ -1466,14 +1424,10 @@ function main() {
           goToScoreBoard()
           clearInterval(gameStartingInterval)
         }
-
       }, 1000)
     }
 
-    //startGame(numOfGhostsInGame)
-
     function startGame(numberOfGhosts) {
-
 
       displayLives(lives)
 
@@ -1486,7 +1440,6 @@ function main() {
         if ((numberOfGhosts - 4) > 0) {
           generateNewGhost()
           numberOfGhosts--
-
         }
       }, secondsBetweenNewGhostGeneration * 1000)
 
@@ -1498,6 +1451,7 @@ function main() {
         if (ghostsAreFrozen === false) {
           moveGhosts()
         }
+
       }, ghostSpeed * 1000)
 
       startPlayerInterval(playerSpeed)
@@ -1516,12 +1470,9 @@ function main() {
         handleCellGateColor()
         clearTimeOutandDomDisplayIfAllGhostsEaten()
 
-
-
       }, 10)
     }
   }
 }
-
 
 window.addEventListener('DOMContentLoaded', main)
