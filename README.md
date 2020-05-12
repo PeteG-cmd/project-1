@@ -194,7 +194,7 @@ The only element of the 'superfoods' that also required animations was firing a 
 	  }
 	}
 
-## SCORING
+## Scoring
 
 The player earns 10 points for each bit of food eaten, 50 points for eating a superfood, and 100 points for eating a ghost. 100 points are also awarded if a ghost is hit and killed with a missile.
 
@@ -204,7 +204,7 @@ The player starts the game with 4 lives, and if the game continues to level 3, t
 
 
 
-## LEVELS AND DIFFICULTY
+## Levels and Difficulty
 
 Once the player has eaten all the food and superfood the level ends and a message to the player is displayed showing the level and the score. 
 
@@ -214,7 +214,7 @@ In each subsequent level the ghosts expand their search area by 2 (the amount of
 
 
 
-## GHOST MOVEMENT AND INTELLIGENCE
+## Ghost Movement and Intelligence
 
 One of the most challenging aspects of creating this game was to get the Ghosts to move in an intelligent way to make the game challenging for the player, and to be able to slowly increase the level of their intelligence to increase the difficulty as the levels increased.
 
@@ -423,7 +423,7 @@ To handle all the ghost movement and logic, I created a Ghost class and a Locati
 
 
 
-## CHALLENGES
+## Challenges
 
 During this project there were 2 main challenges to get the game running as designed.
 
@@ -486,14 +486,14 @@ An example of the code handling the 'Eat' superfood, and some of the function ch
 	    }
 	
 
-## POTENTIAL FUTURE FEATURES
+## Potential Future Features
 
 The next step for this project is to create new maps for each level. Originally I had planned to do this but as the deadline for submission loomed I had to de-prioritise this to ensure other functionality was working properly. I do think it would be a better experience for the user though to have at least one or two other maps to play.
 
 Another feature that I would like to implement would be to have the ghosts actively avoid the player during the 'eat' superfood period. Currently they only stop tracking the player, but i think it would be more interesting if they smartly avoided the player.
 
 
-## LESSONS LEARNED
+## Lessons Learnt 
 
 Naming. This was a hard lesson learnt, and as I moved through the game my name conventions and practices did improve, however I did run in to challenges at times from giving functions or elements names that were not specific enough, or that were too close to other names.
 
