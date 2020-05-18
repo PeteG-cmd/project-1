@@ -492,6 +492,10 @@ The next step for this project is to create new maps for each level. Originally 
 
 Another feature that I would like to implement would be to have the ghosts actively avoid the player during the 'eat' superfood period. Currently they only stop tracking the player, but i think it would be more interesting if they smartly avoided the player.
 
+## Successes
+
+During this project I really enjoyed getting to grips with JavaScript, and especially the planning involved when making sure to update the DOM as well as controlling the actual game variables. In this game there is a lot going on, and I am fairly happy with the way I managed to display all this information to the player without distracting from the main gameplay, or overloading them with too much additional data.
+
 
 ## Lessons Learnt 
 
