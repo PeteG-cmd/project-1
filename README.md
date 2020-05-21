@@ -20,7 +20,7 @@ You can play the game [here](https://peteg-cmd.github.io/project-1/)
 * Include separate HTML / CSS / JavaScript files
 * Stick with KISS (Keep It Simple Stupid) and DRY (Don't Repeat Yourself) principles
 * Use Javascript for DOM manipulation
-* Deploy your game online, where the rest of the world can access it
+* Deploy the game online, where the rest of the world can access it
 * Use semantic markup for HTML and CSS (adhere to best practices)
 
 ## The Technologies used
@@ -121,7 +121,7 @@ During gameplay the grid is not visible, but is highlighted for demonstration pu
 
 <img src='screenshots/grid-comparison.png'>
 
-The game start scree the user sees is as below:
+The game start screen the user sees is as below:
 
 <img src='screenshots/pac-dude-start.png'>
 
@@ -435,7 +435,7 @@ This issue also drove me to implement another control on triggering the search, 
 
 The challenge here came from the fact that the game behaves slightly differently depending on which superfood is active, and must handle these together. For the 'Speed' superfood, the player interval speed is also removed from the game interval, and temporarily moved to its own slightly quicker interval speed. To handle these issues I created some global variables to keep track of certain elements, which could be controlled by any of the intervals of superfood functions. This ensured that things like the ghosts being released or returned to the pen if eaten were handled correctly regardless of which or how many superfood periods were active.
 
-An example of the code handling the 'Eat' superfood, and some of the function checks it makes is below:
+An example of the code handling the 'Eat' superfood, and some of the function checks it makes are below:
 
 	 function removeSuperFoodActivateChase(cellNum) {
 	// CHECK WHEN A SUPER FOOD IS EATEN
@@ -488,9 +488,9 @@ An example of the code handling the 'Eat' superfood, and some of the function ch
 
 ## Potential Future Features
 
-The next step for this project is to create new maps for each level. Originally I had planned to do this but as the deadline for submission loomed I had to de-prioritise this to ensure other functionality was working properly. I do think it would be a better experience for the user though to have at least one or two other maps to play.
+The next step for this project is to create new maps for each level. Originally, I had planned to do this but as the deadline for submission loomed I had to de-prioritise this to ensure other functionality was working properly. I do think it would be a better experience for the user though to have at least one or two other maps to play.
 
-Another feature that I would like to implement would be to have the ghosts actively avoid the player during the 'eat' superfood period. Currently they only stop tracking the player, but i think it would be more interesting if they smartly avoided the player.
+Another feature that I would like to implement would be to have the ghosts actively avoid the player during the 'eat' superfood period. Currently they only stop tracking the player, but I think it would be more interesting if they smartly avoided the player.
 
 ## Successes
 
@@ -499,9 +499,9 @@ During this project I really enjoyed getting to grips with JavaScript, and espec
 
 ## Lessons Learnt 
 
-Naming. This was a hard lesson learnt, and as I moved through the game my name conventions and practices did improve, however I did run in to challenges at times from giving functions or elements names that were not specific enough, or that were too close to other names.
+Naming. This was a hard lesson learnt, and as I moved through the game my name conventions and practices did improve; however, I did run in to challenges at times from giving functions or elements names that were not specific enough, or that were too close to other names.
 
-Design mobile first. This game does not work on mobile, and I wish I had given more consideration to this at the start. If i have time in future I may go back and adapt it, but this would have been easier if i had planned for it properly.
+Design mobile first. This game does not work on mobile, and I wish I had given more consideration to this at the start. If i have time in future I may go back and adapt it, but this would have been easier if I had planned for it properly.
 
 
 
